@@ -5,6 +5,7 @@
 #include "date.h"
 #include "lists.h"
 #include "files.h"
+#include "additional_task.h"
 
 void print (list_elem_t * e, wchar_t * text)
 {
@@ -34,6 +35,11 @@ int main ()
     read_from_csv(l, L"file.csv");
 
     lists_SortListByField(l, SORT_DESCENDING_ORDER, LIST_ANIMAL_NAME);
+
+
+    udate_t d1 = {2005, 1, 1}, d2 = {2008, 12, 15};
+    wprintf(L"Стоимость: %Lf.\n", lists_GetCostForPeriod(l, &d1, NULL));
+    wprintf(L"Вес:       %Lf.\n", lists_GetWeightForPeriod(l, &d1, NULL));
 
     lists_DeleteListObject(&l);
     return 0;
