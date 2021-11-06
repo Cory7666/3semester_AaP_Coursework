@@ -7,6 +7,8 @@
 #include "files.h"
 #include "additional_task.h"
 
+#include "tui.h"
+
 void print (list_elem_t * e, wchar_t * text)
 {
     setlocale(LC_ALL, "");
@@ -26,21 +28,29 @@ void print (list_elem_t * e, wchar_t * text)
         );
 }
 
+
+
 int main ()
 {
-    wchar_t text[2048];
+    const menu_t MAIN_MENU = {
+        L"     Просто выйти      ",
+        L" Выйти с большой буквы ",
+        L"   Выйти через Ctrl+C  ",
+        NULL
+    };
 
-    list_obj_t * l = lists_CreateNewListObject();
+    setlocale(LC_ALL, "");
 
-    read_from_csv(l, L"file.csv");
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, 1);
 
-    lists_SortListByField(l, SORT_DESCENDING_ORDER, LIST_ANIMAL_NAME);
+    // tui_draw_popup_text_message(L"Текстовое окно", L"merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp");
+    //tui_draw_vmenu(stdscr, 0, 0, 1, MAIN_MENU, 0);
+    
+    tui_draw_popup_select (L"Выбор выхода из программы", L"Как предпочитаете выйти из этой моноформной программы? Всё остальное - это merp merp merp merp merp merp merp merp ....", MAIN_MENU);
 
-
-    udate_t d1 = {2005, 1, 1}, d2 = {2008, 12, 15};
-    wprintf(L"Стоимость: %Lf.\n", lists_GetCostForPeriod(l, &d1, NULL));
-    wprintf(L"Вес:       %Lf.\n", lists_GetWeightForPeriod(l, &d1, NULL));
-
-    lists_DeleteListObject(&l);
+    endwin();
     return 0;
 }
