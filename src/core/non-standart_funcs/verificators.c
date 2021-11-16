@@ -1,0 +1,2 @@
+#include "verificators.h"
+

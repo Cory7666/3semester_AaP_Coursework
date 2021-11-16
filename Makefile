@@ -29,6 +29,7 @@ CORE_FILES = $(addprefix $(SRC_CORE_PATH)/,\
 	$(addprefix non-standart_funcs/,\
 		wcs_converters.c \
 		cmp_functions.c \
+		verificators.c \
 	)\
 	additional_task.c \
 )
