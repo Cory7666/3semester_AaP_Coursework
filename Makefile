@@ -29,7 +29,7 @@ CORE_FILES = $(addprefix $(SRC_CORE_PATH)/,\
 	$(addprefix non-standart_funcs/,\
 		wcs_converters.c \
 		cmp_functions.c \
-		verificators.c \
+		checker.c \
 	)\
 	additional_task.c \
 )
@@ -39,9 +39,13 @@ TUI_FILES = $(addprefix $(SRC_TUI_PATH)/,\
 		popup_pattern.c \
 		popup_text_message.c \
 		popup_select.c \
+		popup_form.c \
 	)\
 	$(addprefix menu/,\
 		menu.c \
+	)\
+	$(addprefix forms/,\
+		forms.c \
 	)\
 )
 

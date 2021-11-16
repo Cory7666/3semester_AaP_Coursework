@@ -28,7 +28,7 @@ void print (list_elem_t * e, wchar_t * text)
         );
 }
 
-
+void tui_draw_form_field (WINDOW * win, int y, int x, const wchar_t * placeholder, const wchar_t * value, int width);
 
 int main ()
 {
@@ -49,7 +49,14 @@ int main ()
     // tui_draw_popup_text_message(L"Текстовое окно", L"merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp merp");
     //tui_draw_vmenu(stdscr, 0, 0, 1, MAIN_MENU, 0);
     
-    fwprintf (stderr, L"Выбрана кнопка: %2d.\n", tui_draw_popup_select (L"Выбор выхода из программы", L"Как предпочитаете выйти из этой моноформной программы? Всё остальное - это merp merp merp merp merp merp merp merp ....", MAIN_MENU));
+    // fwprintf (stderr, L"Выбрана кнопка: %2d.\n", tui_draw_popup_select (L"Выбор выхода из программы", L"Как предпочитаете выйти из этой моноформной программы? Всё остальное - это merp merp merp merp merp merp merp merp ....", MAIN_MENU));
+
+    // tui_draw_form_field (stdscr, 0, 0, L"Введите имя", L"", 10);
+    // refresh();
+    // getwchar();
+
+    wchar_t value[200];
+    tui_draw_popup_form (L"Имя героя", L"Введите имя героя", L"Введите имя", value, 20, VMASK_ANY_CHAR);
 
     endwin();
     return 0;

@@ -11,6 +11,7 @@
 
 #include "keyboard_keys.h"
 #include "cmp_funcs.h"
+#include "checker.h"
 
 
 
@@ -32,6 +33,8 @@ void tui_draw_vmenu (WINDOW *, const int, const int, const int, const menu_t, co
 void tui_draw_popup_text_message (const wchar_t *, const wchar_t *);
 /* Отобразить окно с выбором */
 int tui_draw_popup_select (const wchar_t *, const wchar_t *, const menu_t);
+/* Отобразить окно с формой */
+int tui_draw_popup_form (const wchar_t *, const wchar_t *, const wchar_t *, wchar_t *, int, checker_mode_t);
 
 
 
