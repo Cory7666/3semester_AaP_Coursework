@@ -12,6 +12,7 @@
 #include "keyboard_keys.h"
 #include "cmp_funcs.h"
 #include "checker.h"
+#include "lists.h"
 
 
 
@@ -23,6 +24,9 @@
 typedef wchar_t* menu_t[];
 
 
+
+/* Получить количество строк, занимаемых переданным текстом. Также учитываются символы перехода на новую строку */
+int get_message_lines_count (const wchar_t *, const int max_width);
 
 /* Получить количество пунктов в меню */
 int tui_get_menu_item_count (const menu_t);
@@ -36,6 +40,8 @@ int tui_draw_popup_select (const wchar_t *, const wchar_t *, const menu_t);
 /* Отобразить окно с формой */
 int tui_draw_popup_form (const wchar_t *, const wchar_t *, const wchar_t *, wchar_t *, int, checker_mode_t);
 
+/* Нарисовать таблицу в выбранном окне, отступив от начала списка на num_page страниц */
+int tui_draw_table_in_window (WINDOW *, const list_obj_t, const length_t, const int);
 
 
 #endif // ! _TUI_POPUPS_H

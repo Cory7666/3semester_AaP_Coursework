@@ -36,7 +36,7 @@ CORE_FILES = $(addprefix $(SRC_CORE_PATH)/,\
 
 TUI_FILES = $(addprefix $(SRC_TUI_PATH)/,\
 	$(addprefix popups/,\
-		popup_pattern.c \
+		pattern_functions.c \
 		popup_text_message.c \
 		popup_select.c \
 		popup_form.c \
@@ -46,6 +46,9 @@ TUI_FILES = $(addprefix $(SRC_TUI_PATH)/,\
 	)\
 	$(addprefix forms/,\
 		forms.c \
+	)\
+	$(addprefix table/,\
+		table.c \
 	)\
 )
 
@@ -66,7 +69,10 @@ cleanall: clean
 	find . -name "*.a" | while read -r file; do rm "$$file"; done
 	if [ -f "$(PROG_NAME)" ]; then rm -rf "$(PROG_NAME)"; fi
 
-$(PROG_NAME): $(SRC_PATH)/$(subst .c,.o,$(MAIN_FILE)) $(SRC_PATH)/libcore.a $(SRC_PATH)/libtui.a
+# $(PROG_NAME): $(SRC_PATH)/$(subst .c,.o,$(MAIN_FILE)) $(SRC_PATH)/libcore.a $(SRC_PATH)/libtui.a
+#	$(GCC) $(CFLAGS) -o $@ $^ $(CLIBS)
+
+$(PROG_NAME): $(subst .c,.o,$(SRC_PATH)/$(MAIN_FILE) $(CORE_FILES) $(TUI_FILES))
 	$(GCC) $(CFLAGS) -o $@ $^ $(CLIBS)
 
 %.o: %.c

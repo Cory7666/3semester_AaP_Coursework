@@ -42,7 +42,7 @@ int main ()
     setlocale(LC_ALL, "");
 
     initscr();
-    cbreak();
+    raw();
     noecho();
     keypad(stdscr, 1);
 
@@ -55,8 +55,41 @@ int main ()
     // refresh();
     // getwchar();
 
+    for (size_t counter = 0; counter < LINES * COLS; counter ++)
+        waddstr (stdscr, "-");
+    
+    refresh ();
+
+    /*
     wchar_t value[200];
-    tui_draw_popup_form (L"Имя героя", L"Введите имя героя", L"Введите имя", value, 20, VMASK_ANY_CHAR);
+    memset(value, 0, sizeof(value));
+
+    getwchar ();
+
+    tui_draw_popup_form (L"А как вас зовут?",
+    L"Вы вошли в таверну.\n"
+    L"Вы были ослеплены светом ламп.\n\n"
+    L"К вам подходит высокий бородатый мужчина, одетый в кожанную куртку. За спиной у него дробовик.\n"
+    L"Он спросил ваше имя. Что ему ответите?"
+    , L"Промямлите ваше имя", value, 199, VMASK_ANY_CHAR | VMASK_SPACES | VMASK_PUNCTS);
+
+    refresh ();
+    getwchar ();
+    */
+
+    list_obj_t * list_obj = lists_CreateNewListObject();
+    read_from_csv (list_obj, L"data.csv");
+
+    WINDOW * win_table = newwin(20, COLS, 0, 0);
+
+    tui_draw_table_in_window (win_table, *list_obj, 2, 0);
+    refresh();
+    wrefresh(win_table);
+
+    getwchar();
+
+    delwin(win_table);
+    lists_DeleteListObject(list_obj);
 
     endwin();
     return 0;

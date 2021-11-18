@@ -1,7 +1,12 @@
+typedef unsigned int mkey_t;
+
 enum MKEYBOARD_KEYS
 {
     MKEY_NULL = 0,
-    MKEY_CTRL_D = 4,
+    MKEY_CTRL_A = 1,
+    MKEY_CTRL_B,
+    MKEY_CTRL_C,
+    MKEY_CTRL_D,
     MKEY_TAB = 9,
     MKEY_ENTER = 13,
     MKEY_ESCAPE= 27,
