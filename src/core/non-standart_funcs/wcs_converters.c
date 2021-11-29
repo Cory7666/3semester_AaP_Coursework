@@ -81,3 +81,30 @@ void float2wcs (const long double number, wchar_t * string)
 {
     swprintf(string, 20, L"%Lf", number);
 }
+
+void fitwcs (wchar_t * dest, const wchar_t * src, const int max_length)
+{
+    if (!dest || !src || max_length < 4) return;
+
+    int
+        curr_length  = 0,
+        src_length   = wcslen (src),
+        insert_colon = (src_length - max_length > 0) ? 1 : 0;
+    
+    wchar_t
+        * src_var    = src;
+    
+    while (*src_var != 0 && max_length > curr_length)
+    {
+        *dest = (max_length - 4 < curr_length && insert_colon) ? (L'.') : (*src_var);
+        
+        src_var++;
+        dest++;
+        curr_length ++;
+    }
+
+    while (curr_length < max_length)
+        (*(dest++) = L' ') & (curr_length ++);
+
+    return;
+}

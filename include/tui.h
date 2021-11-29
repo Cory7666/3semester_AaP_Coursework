@@ -40,7 +40,9 @@ int tui_draw_popup_select (const wchar_t *, const wchar_t *, const menu_t);
 /* Отобразить окно с формой */
 int tui_draw_popup_form (const wchar_t *, const wchar_t *, const wchar_t *, wchar_t *, int, checker_mode_t);
 
-/* Нарисовать таблицу в выбранном окне, отступив от начала списка на num_page страниц */
+/*
+ * Нарисовать таблицу в выбранном окне, отступив от начала списка на num_page страниц.
+*/
 int tui_draw_table_in_window (WINDOW *, const list_obj_t, const length_t, const int);
 
 

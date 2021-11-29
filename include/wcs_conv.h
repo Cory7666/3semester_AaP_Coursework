@@ -22,4 +22,9 @@ void int2wcs (const long long, wchar_t *);
 */
 void float2wcs (const long double, wchar_t *);
 
+/*
+ * Нормализовать строку и Изменить размер строки до указанного.
+*/
+void fitwcs (wchar_t *, const wchar_t *, const int);
+
 #endif // !_WCS_CONV_H
