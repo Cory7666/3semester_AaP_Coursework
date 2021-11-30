@@ -79,7 +79,7 @@ void int2wcs (const long long number, wchar_t * string)
 
 void float2wcs (const long double number, wchar_t * string)
 {
-    swprintf(string, 20, L"%Lf", number);
+    swprintf(string, 8, L"%Lf", number);
 }
 
 void fitwcs (wchar_t * dest, const wchar_t * src, const int max_length)

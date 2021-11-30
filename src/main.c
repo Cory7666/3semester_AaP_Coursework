@@ -18,6 +18,8 @@ int main ()
     list_obj_t * main_list = lists_CreateNewListObject (),    // Список, содержащий все данные
                * save_list = NULL,                            // Список, который нужно сохранить в файл
                * search_results_list = lists_CreateNewListObject ();  // Список с результатами поиска
+    int curr_selected_page = 1,
+        curr_selected_table_row = 1;
 
     draw_win_background (stdscr);
     refresh ();
@@ -55,7 +57,7 @@ int main ()
                     mvwprintw (win_main, getmaxy(win_main) - 9,  1, "  (↑ ↓) Выбор строки в таблице.           ");
                     mvwprintw (win_main, getmaxy(win_main) - 8,  1, "  (ENTER) Подтвердить выбор строки.       ");
                     mvwprintw (win_main, getmaxy(win_main) - 7,  1, "Действия над данными:                     ");
-                    mvwprintw (win_main, getmaxy(win_main) - 6,  1, "  (A) Добавить данные.                    ");
+                    mvwprintw (win_main, getmaxy(win_main) - 6,  1, "  (P) Добавить данные.                    ");
                     mvwprintw (win_main, getmaxy(win_main) - 5,  1, "  (W) Сохранить в файл/Загрузить из файла.");
                     mvwprintw (win_main, getmaxy(win_main) - 4,  1, "  (F) Поиск.                              ");
                     mvwprintw (win_main, getmaxy(win_main) - 3,  1, "  (T) Задание по варианту.                ");
@@ -67,18 +69,113 @@ int main ()
                         switch (selected_key)
                         {
                             // Действие "Добавить элемент" 
-                            case L'A': case L'a':
+                            case L'P': case L'p':
                                 {
                                     /* Создать дополнительные окна */
                                     WINDOW * win_add_element = newwin (LINES - 2, COLS - 4, 1, 2);
                                     PANEL  * panel_add_element = new_panel (win_add_element);
                                     update_panels ();
 
-                                    
+                                    WINDOW * win_elem_info = derwin (win_add_element, getmaxy(win_add_element) - 3 - 3, getmaxx(win_add_element) - 2, 3, 1);
+                                    PANEL  * panel_elem_info = new_panel (win_elem_info);
+                                    update_panels ();
+
+                                    list_data_t d;
+                                    memset (&d, 0, sizeof (d));
+                                    d.date.Y = 2021;
+                                    d.date.M = 9;
+                                    d.date.D = 1;
+
+                                    list_elem_t * elem = lists_CreateNewElement (&d);
+                                    mkey_t selected_field = 2;
+                                    /* Помощь при ВВОДе */
+
+                                    mvwprintw (win_add_element, getmaxy(win_add_element) - 2, 1, "(P) Сохранить. (E) Выйти.");
+
+                                    selected_key = MKEY_NULL;
+
+                                    do
+                                    {
+                                        switch (selected_key)
+                                        {
+                                            case MKEY_TAB:
+                                                if (selected_field < 9) selected_field++;
+                                                else selected_field = 1;
+                                                break;
+                                            
+                                            case MKEY_ENTER: case MKEY_ARROW_RIGHT:
+                                                switch (selected_field)
+                                                {
+                                                    case 1:
+                                                        tui_draw_popup_text_message (L"Операция непозволена", L"Вы не можете установить ID. Это не разрешено.");
+                                                        break;
+                                                    case 2:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        int2wcs (elem->data.cage_num, tmp_wcs);  // Записать в неё .cage_num
+                                                        tui_draw_popup_form (L"Ввод номера вольера", L"Введите номер вольера.", L"#", tmp_wcs, 7, VMASK_DIGITS);
+                                                        elem->data.cage_num = wcs2int (tmp_wcs); // Записать в .cage_num
+                                                        break;
+                                                    case 3:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        wcscpy (tmp_wcs, elem->data.animal.areal);
+                                                        tui_draw_popup_form (L"Ввод ариала", L"Введите ариал обитания животного.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, ANIMAL_AREAL_MAX_LEN, VMASK_ANY_CHAR);
+                                                        wcscpy (elem->data.animal.areal, tmp_wcs);
+                                                        break;
+                                                    case 4:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        wcscpy (tmp_wcs, elem->data.animal.breed);
+                                                        tui_draw_popup_form (L"Ввод породы", L"Введите название породы животного.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, ANIMAL_BREED_MAX_LEN, VMASK_ANY_CHAR);
+                                                        wcscpy (elem->data.animal.breed, tmp_wcs);
+                                                        break;
+                                                    case 5:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        wcscpy (tmp_wcs, elem->data.animal.name);
+                                                        tui_draw_popup_form (L"Ввод имени", L"Введите имя животного.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, ANIMAL_NAME_MAX_LEN, VMASK_ANY_CHAR);
+                                                        wcscpy (elem->data.animal.name, tmp_wcs);
+                                                        break;
+                                                    case 6:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        wcscpy (tmp_wcs, elem->data.products.type);
+                                                        tui_draw_popup_form (L"Ввод типа продукта", L"Введите тип продуктов.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, PRODUCT_TYPE_MAX_LEN, VMASK_ANY_CHAR);
+                                                        wcscpy (elem->data.products.type, tmp_wcs);
+                                                        break;
+                                                    case 7:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        float2wcs (elem->data.products.weight, tmp_wcs);  // Записать в неё .weight
+                                                        tui_draw_popup_form (L"Ввод веса", L"Введите вес продуктов.", L"Вес", tmp_wcs, 8, VMASK_DIGITS);
+                                                        elem->data.products.weight = wcs2float (tmp_wcs); // Записать в .weight
+                                                        break;
+                                                    case 8:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        float2wcs (elem->data.products.cost, tmp_wcs);  // Записать в неё .cost
+                                                        tui_draw_popup_form (L"Ввод стоимости", L"Введите стоимость продуктов.", L"Цена", tmp_wcs, 8, VMASK_DIGITS);
+                                                        elem->data.products.cost = wcs2float (tmp_wcs); // Записать в .cost
+                                                        break;
+                                                    case 9:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        tui_draw_popup_date (L"Ввод даты", L"Введите дату поступления животного.", &elem->data.date);
+                                                        break;
+                                                }
+                                                break;
+                                            
+                                            case L'P': case L'p':
+                                                lists_InsertAsListsTail (main_list, elem);
+                                                elem = lists_CreateNewElement (&d);
+                                                break;
+                                        }
+
+                                        tui_print_element_info_window (win_elem_info, selected_field, elem);
+
+                                        update_panels ();
+                                        doupdate ();
+                                    }
+                                    while ((selected_key = getwchar ()) != L'E' && selected_key != L'e');
 
 
                                     /* Удалить дополнительные окна */
+                                    del_panel (panel_elem_info);
                                     del_panel (panel_add_element);
+                                    delwin (win_elem_info);
                                     delwin (win_add_element);
                                 }
                                 break;
@@ -115,7 +212,7 @@ int main ()
                                         );
 
                                         /* Проверить на существование файл */
-                                        if (!is_exist_wcs (tmp_wcs))
+                                        if (is_exist_wcs (tmp_wcs))
                                         {
                                             tui_draw_popup_text_message (
                                                 L"ОШИБКА!",
@@ -125,6 +222,8 @@ int main ()
                                         }
 
                                         /* Всё ок. Очистить данные в старых списках и загрузить новые данные */
+                                        lists_CleanListObject (main_list);
+                                        lists_CleanListObject (search_results_list);
                                         switch (selected_key)
                                         {
                                             case 1:
@@ -135,7 +234,6 @@ int main ()
                                                 read_from_csv (main_list, tmp_wcs);
                                                 break;
                                         }
-                                        lists_CleanListObject (&search_results_list);
 
                                         tui_draw_popup_text_message (
                                             L"УСПЕХ!",
@@ -210,9 +308,137 @@ int main ()
                             // Действие "Задание по варианту"
                             case L'T': case L't':
                                 break;
+                            
+                            // Изменение страницы
+                            case MKEY_ARROW_DOWN:
+                                if (curr_selected_table_row < getmaxy(win_table) - 4)
+                                    curr_selected_table_row++;
+                                break;
+                            case MKEY_ARROW_UP:
+                                if (curr_selected_table_row > 1)
+                                    curr_selected_table_row--;
+                                break;
+                            
+                            // Изменение строки таблицы
+                            case MKEY_ARROW_LEFT:
+                                if (curr_selected_page > 1)
+                                    curr_selected_page--;
+                                break;
+                            case MKEY_ARROW_RIGHT:
+                                if (curr_selected_page < main_list->_length_ / (getmaxy(win_table) - 4) + !!(main_list->_length_ % (getmaxy(win_table) - 4)))
+                                    curr_selected_page++;
+                                break;
+                            
+                            case MKEY_ENTER:
+                                {
+                                    /* Создать дополнительные окна */
+                                    WINDOW * win_add_element = newwin (LINES - 2, COLS - 4, 1, 2);
+                                    PANEL  * panel_add_element = new_panel (win_add_element);
+                                    update_panels ();
+
+                                    WINDOW * win_elem_info = derwin (win_add_element, getmaxy(win_add_element) - 3 - 3, getmaxx(win_add_element) - 2, 3, 1);
+                                    PANEL  * panel_elem_info = new_panel (win_elem_info);
+                                    update_panels ();
+
+                                    length_t position = curr_selected_page * (getmaxy(win_table) - 4) + curr_selected_table_row - 1;
+                                    list_elem_t * elem = lists_SearchElementByField (main_list, LIST_POSITION, (void *) &position);
+                                    mkey_t selected_field = 2;
+                                    /* Помощь при ВВОДе */
+
+                                    mvwprintw (win_add_element, getmaxy(win_add_element) - 2, 1, "(P) Удалить. (I) Редактирование (ВКЛ ). (E) Выйти.");
+
+                                    selected_key = MKEY_NULL;
+
+                                    do
+                                    {
+                                        switch (selected_key)
+                                        {
+                                            case MKEY_TAB:
+                                                if (selected_field < 9) selected_field++;
+                                                else selected_field = 1;
+                                                break;
+                                            
+                                            case MKEY_ENTER: case MKEY_ARROW_RIGHT:
+                                                switch (selected_field)
+                                                {
+                                                    case 1:
+                                                        tui_draw_popup_text_message (L"Операция непозволена", L"Вы не можете установить ID. Это не разрешено.");
+                                                        break;
+                                                    case 2:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        int2wcs (elem->data.cage_num, tmp_wcs);  // Записать в неё .cage_num
+                                                        tui_draw_popup_form (L"Ввод номера вольера", L"Введите номер вольера.", L"#", tmp_wcs, 7, VMASK_DIGITS);
+                                                        elem->data.cage_num = wcs2int (tmp_wcs); // Записать в .cage_num
+                                                        break;
+                                                    case 3:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        wcscpy (tmp_wcs, elem->data.animal.areal);
+                                                        tui_draw_popup_form (L"Ввод ариала", L"Введите ариал обитания животного.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, ANIMAL_AREAL_MAX_LEN, VMASK_ANY_CHAR);
+                                                        wcscpy (elem->data.animal.areal, tmp_wcs);
+                                                        break;
+                                                    case 4:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        wcscpy (tmp_wcs, elem->data.animal.breed);
+                                                        tui_draw_popup_form (L"Ввод породы", L"Введите название породы животного.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, ANIMAL_BREED_MAX_LEN, VMASK_ANY_CHAR);
+                                                        wcscpy (elem->data.animal.breed, tmp_wcs);
+                                                        break;
+                                                    case 5:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        wcscpy (tmp_wcs, elem->data.animal.name);
+                                                        tui_draw_popup_form (L"Ввод имени", L"Введите имя животного.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, ANIMAL_NAME_MAX_LEN, VMASK_ANY_CHAR);
+                                                        wcscpy (elem->data.animal.name, tmp_wcs);
+                                                        break;
+                                                    case 6:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        wcscpy (tmp_wcs, elem->data.products.type);
+                                                        tui_draw_popup_form (L"Ввод типа продукта", L"Введите тип продуктов.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, PRODUCT_TYPE_MAX_LEN, VMASK_ANY_CHAR);
+                                                        wcscpy (elem->data.products.type, tmp_wcs);
+                                                        break;
+                                                    case 7:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        float2wcs (elem->data.products.weight, tmp_wcs);  // Записать в неё .weight
+                                                        tui_draw_popup_form (L"Ввод веса", L"Введите вес продуктов.", L"Вес", tmp_wcs, 8, VMASK_DIGITS);
+                                                        elem->data.products.weight = wcs2float (tmp_wcs); // Записать в .weight
+                                                        break;
+                                                    case 8:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        float2wcs (elem->data.products.cost, tmp_wcs);  // Записать в неё .cost
+                                                        tui_draw_popup_form (L"Ввод стоимости", L"Введите стоимость продуктов.", L"Цена", tmp_wcs, 8, VMASK_DIGITS);
+                                                        elem->data.products.cost = wcs2float (tmp_wcs); // Записать в .cost
+                                                        break;
+                                                    case 9:
+                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
+                                                        tui_draw_popup_date (L"Ввод даты", L"Введите дату поступления животного.", &elem->data.date);
+                                                        break;
+                                                }
+                                                break;
+                                            
+                                            case L'P': case L'p':
+                                                if (elem == main_list->head)
+                                                    main_list->head = elem->next;
+                                                lists_DeleteElement (elem);
+                                                main_list->_length_--;
+                                                break;
+                                        }
+
+                                        tui_print_element_info_window (win_elem_info, selected_field, elem);
+
+                                        update_panels ();
+                                        doupdate ();
+                                    }
+                                    while (elem != NULL && (selected_key = getwchar ()) != L'E' && selected_key != L'e');
+
+
+                                    /* Удалить дополнительные окна */
+                                    del_panel (panel_elem_info);
+                                    del_panel (panel_add_element);
+                                    delwin (win_elem_info);
+                                    delwin (win_add_element);
+                                }
+                                break;
                         }
 
-                        tui_draw_table_in_window (win_table, *main_list, 1, 1);
+                        tui_draw_table_in_window (win_table, *main_list, curr_selected_page, curr_selected_table_row);
 
                         update_panels ();
                         doupdate ();

@@ -10,12 +10,16 @@ void tui_print_element_info_window (WINDOW * win, const int selected_field, cons
 
     /* Нарисовать свой ярлык к каждому полю информации и нарисовать соответствующее поле */
     
+    memset (tmp_wcs, 0, sizeof(tmp_wcs));
     int2wcs (elem->id, tmp_wcs);
+    if (selected_field == 1) wattron (win, TUI_HIGHLIGHT_ITEM_STYLE);
     mvwprintw (win, 0, 0, " Уникальный ID            ");
     tui_draw_form_field (win, curr_offset++, 0, L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, LABEL_MAX_WIDTH);
+    if (selected_field == 1) wattroff (win, TUI_HIGHLIGHT_ITEM_STYLE);
 
 
 
+    memset (tmp_wcs, 0, sizeof(tmp_wcs));
     int2wcs (elem->data.cage_num, tmp_wcs);
     if (selected_field == 2) wattron (win, TUI_HIGHLIGHT_ITEM_STYLE);
     mvwprintw (win, curr_offset++, 0, " Номер вольера            ");
@@ -51,7 +55,8 @@ void tui_print_element_info_window (WINDOW * win, const int selected_field, cons
     if (selected_field == 6) wattroff (win, TUI_HIGHLIGHT_ITEM_STYLE);
 
 
-    int2wcs (elem->data.products.weight, tmp_wcs);
+    memset (tmp_wcs, 0, sizeof(tmp_wcs));
+    float2wcs (elem->data.products.weight, tmp_wcs);
     if (selected_field == 7) wattron (win, TUI_HIGHLIGHT_ITEM_STYLE);
     mvwprintw (win, curr_offset++, 0, " Продукты. Вес            ");
     tui_draw_form_field (win, curr_offset++, 0, L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, LABEL_MAX_WIDTH);
@@ -59,7 +64,8 @@ void tui_print_element_info_window (WINDOW * win, const int selected_field, cons
 
 
 
-    int2wcs (elem->data.products.cost, tmp_wcs);
+    memset (tmp_wcs, 0, sizeof(tmp_wcs));
+    float2wcs (elem->data.products.cost, tmp_wcs);
     if (selected_field == 8) wattron (win, TUI_HIGHLIGHT_ITEM_STYLE);
     mvwprintw (win, curr_offset++, 0, " Продукты. Стоимость      ");
     tui_draw_form_field (win, curr_offset++, 0, L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, LABEL_MAX_WIDTH);
@@ -67,6 +73,7 @@ void tui_print_element_info_window (WINDOW * win, const int selected_field, cons
 
 
 
+    memset (tmp_wcs, 0, sizeof(tmp_wcs));
     date2wcs (&elem->data.date, tmp_wcs);
     if (selected_field == 9) wattron (win, TUI_HIGHLIGHT_ITEM_STYLE);
     mvwprintw (win, curr_offset++, 0, " Дата поступления         ");
