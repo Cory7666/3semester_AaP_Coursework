@@ -33,6 +33,8 @@ int tui_get_menu_item_count (const menu_t);
 /* Отрисовать вертикальное меню в заданном месте с заданным расстоянием между элементами */
 void tui_draw_vmenu (WINDOW *, const int, const int, const int, const menu_t, const int);
 
+/* Нарисовать границы и заголовок для окна */
+void tui_draw_popup_header (WINDOW *, const wchar_t *);
 /* Отобразить окно с обычным текстом */
 void tui_draw_popup_text_message (const wchar_t *, const wchar_t *);
 /* Отобразить окно с выбором */
@@ -46,6 +48,8 @@ void tui_draw_popup_date (const wchar_t *, const wchar_t *, udate_t *);
  * Нарисовать таблицу в выбранном окне, отступив от начала списка на num_page страниц.
 */
 int tui_draw_table_in_window (WINDOW *, const list_obj_t, const length_t, const int);
+
+void tui_print_element_info_window (WINDOW *, const int, const list_elem_t *);
 
 
 #endif // ! _TUI_POPUPS_H

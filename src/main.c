@@ -93,6 +93,7 @@ int main ()
     lists_DeleteListObject(list_obj);
     */
 
+    /*
     udate_t d;
     wchar_t tmp_wcs[2000];
 
@@ -106,6 +107,51 @@ int main ()
     refresh ();
 
     getwchar ();
+    */
+
+    mkey_t key = 0;
+    int selected_item = 2;
+    list_data_t elem_data;
+    elem_data.cage_num = 6956;
+    wcscpy (elem_data.animal.areal, L"Бразилия");
+    wcscpy (elem_data.animal.breed, L"Страус");
+    wcscpy (elem_data.animal.name, L"Коля");
+    wcscpy (elem_data.products.type, L"Семена тыквы");
+    elem_data.products.cost = 1.99;
+    elem_data.products.weight = 24.56;
+    elem_data.date.Y = 2021;
+    elem_data.date.M = 2;
+    elem_data.date.D = 14;
+
+
+    list_elem_t * elem =  lists_CreateNewElement (&elem_data);
+
+    WINDOW * info_window = newwin (LINES - 2, COLS - 2, 1, 1);
+    PANEL  * info_panel   = new_panel (info_window);
+
+    do
+    {
+        switch (key)
+        {
+            case MKEY_ARROW_UP:
+                selected_item--;
+                break;
+            case MKEY_ARROW_DOWN:
+                selected_item ++;
+                break;
+        }
+
+        tui_print_element_info_window (info_window, selected_item, elem);
+
+        update_panels ();
+        doupdate ();
+    }
+    while ((key = getwchar()) != MKEY_ENTER);
+
+
+    lists_DeleteElement (elem);
+    del_panel (info_panel);
+    delwin (info_window);
 
     endwin();
     return 0;

@@ -51,6 +51,9 @@ TUI_FILES = $(addprefix $(SRC_TUI_PATH)/,\
 	$(addprefix table/,\
 		table.c \
 	)\
+	$(addprefix windows/,\
+		show_element_info_window.c \
+	)\
 )
 
 
