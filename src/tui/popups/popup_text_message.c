@@ -5,7 +5,8 @@
 void tui_draw_popup_text_message (const wchar_t * popup_title, const wchar_t * message)
 {
     int win_width = 0.4 * getmaxx(stdscr),
-        win_height = 8 + (wcslen(message) / (win_width - 2) + 1),
+        message_lines_count = get_message_lines_count (message, win_width),
+        win_height = 8 + message_lines_count,
         win_start_x = (getmaxx(stdscr) - win_width) / 2,
         win_start_y = (getmaxy(stdscr) - win_height) / 2;
     

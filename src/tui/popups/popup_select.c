@@ -6,7 +6,8 @@ int tui_draw_popup_select (const wchar_t * popup_title, const wchar_t * message,
 {
     int menu_item_count = tui_get_menu_item_count(menu);
     int win_width = getmax(0.4 * getmaxx(stdscr), wcslen(menu[0])),
-        win_height = 8 + (wcslen(message) / (win_width - 2) + 1) + menu_item_count,
+        message_lines_count = get_message_lines_count (message, win_width),
+        win_height = 8 + message_lines_count + menu_item_count,
         win_start_x = (getmaxx(stdscr) - win_width) / 2,
         win_start_y = (getmaxy(stdscr) - win_height) / 2;
     int selected_menu_item = 1;
@@ -18,7 +19,7 @@ int tui_draw_popup_select (const wchar_t * popup_title, const wchar_t * message,
     tui_draw_popup_header(popup_win, popup_title);
     
     /* Создать окно для текста и поместить в окно текст */
-    WINDOW * inner_win_text = derwin (popup_win, wcslen(message) / (win_width - 2) + 1, win_width - 2, 4, 1);
+    WINDOW * inner_win_text = derwin (popup_win, message_lines_count, win_width - 2, 4, 1);
     PANEL * inner_panel_text = new_panel (inner_win_text);
     mvwprintw(inner_win_text, 0, 0, "%ls", message);
 
