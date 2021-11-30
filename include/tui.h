@@ -39,6 +39,8 @@ void tui_draw_popup_text_message (const wchar_t *, const wchar_t *);
 int tui_draw_popup_select (const wchar_t *, const wchar_t *, const menu_t);
 /* Отобразить окно с формой */
 int tui_draw_popup_form (const wchar_t *, const wchar_t *, const wchar_t *, wchar_t *, int, checker_mode_t);
+/* Отобразить окно с вводом даты */
+void tui_draw_popup_date (const wchar_t *, const wchar_t *, udate_t *);
 
 /*
  * Нарисовать таблицу в выбранном окне, отступив от начала списка на num_page страниц.

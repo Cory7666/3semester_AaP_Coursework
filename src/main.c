@@ -77,6 +77,7 @@ int main ()
     getwchar ();
     */
 
+    /*
     list_obj_t * list_obj = lists_CreateNewListObject();
     read_from_csv (list_obj, L"data.csv");
 
@@ -90,6 +91,21 @@ int main ()
 
     delwin(win_table);
     lists_DeleteListObject(list_obj);
+    */
+
+    udate_t d;
+    wchar_t tmp_wcs[2000];
+
+    memset (&d, 0, sizeof(udate_t));
+    memset (tmp_wcs, 0, sizeof(tmp_wcs));
+
+    tui_draw_popup_date (L"Ввод даты", L"Путник спросил у вас сегодняшнюю дату.\nЧто вы ему скажете?", &d);
+    date2wcs (&d, tmp_wcs);
+
+    mvprintw (0, 0, "Получена дата: %ls.", tmp_wcs);
+    refresh ();
+
+    getwchar ();
 
     endwin();
     return 0;

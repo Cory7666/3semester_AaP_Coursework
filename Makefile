@@ -40,6 +40,7 @@ TUI_FILES = $(addprefix $(SRC_TUI_PATH)/,\
 		popup_text_message.c \
 		popup_select.c \
 		popup_form.c \
+		popup_date.c \
 	)\
 	$(addprefix menu/,\
 		menu.c \
