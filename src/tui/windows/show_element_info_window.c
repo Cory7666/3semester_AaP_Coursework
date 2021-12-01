@@ -3,6 +3,8 @@
 
 void tui_print_element_info_window (WINDOW * win, const int selected_field, const list_elem_t * elem)
 {
+    if (!elem || !win) return;
+    
     const int LABEL_MAX_WIDTH = 26;    // Максимальная ширина ярлыка
     int curr_offset = 1;               // Отступ от начала окна
     wchar_t tmp_wcs[200];              // Строка хранения временного значения

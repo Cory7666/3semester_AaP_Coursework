@@ -32,10 +32,10 @@ enum DATA_FIELDS
 
 
 /* Максимальные длины массивов в структуре данных */
-#define ANIMAL_AREAL_MAX_LEN 100 // Максимальная длина Ареал обитания
-#define ANIMAL_BREED_MAX_LEN 20  // Максимальная длина Порода
-#define ANIMAL_NAME_MAX_LEN  100 // Максимальная длина Имя животного
-#define PRODUCT_TYPE_MAX_LEN 100 // Максимальная длина Тип продукта
+#define ANIMAL_AREAL_MAX_LEN 32 // Максимальная длина Ареал обитания
+#define ANIMAL_BREED_MAX_LEN 32  // Максимальная длина Порода
+#define ANIMAL_NAME_MAX_LEN  32 // Максимальная длина Имя животного
+#define PRODUCT_TYPE_MAX_LEN 32 // Максимальная длина Тип продукта
 
 
 

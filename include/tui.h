@@ -19,6 +19,12 @@
 #define TUI_HIGHLIGHT_ITEM_STYLE ((A_REVERSE) | (A_BOLD))
 
 
+#define TUI_ADD_ELEMENT_CACELLED 0b00000
+#define TUI_ADD_ELEMENT_FLAG     0b00001
+#define TUI_AT_BEGIN_FLAG        0b00100
+#define TUI_AT_END_FLAG          0b00000
+
+
 
 /* Тип массива из пунктов меню */
 typedef wchar_t* menu_t[];
@@ -43,6 +49,11 @@ int tui_draw_popup_select (const wchar_t *, const wchar_t *, const menu_t);
 int tui_draw_popup_form (const wchar_t *, const wchar_t *, const wchar_t *, wchar_t *, int, checker_mode_t);
 /* Отобразить окно с вводом даты */
 void tui_draw_popup_date (const wchar_t *, const wchar_t *, udate_t *);
+
+/* Отобразить окно с редактированием информации */
+int tui_popup_edit_element_data (const wchar_t *, list_data_t *);
+/* Отобразить окно с информацией об элементе */
+int tui_popup_show_only_element (const wchar_t *, const list_elem_t *);
 
 /*
  * Нарисовать таблицу в выбранном окне, отступив от начала списка на num_page страниц.
