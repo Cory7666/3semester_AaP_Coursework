@@ -47,6 +47,8 @@ int tui_draw_popup_form (const wchar_t * popup_title, const wchar_t * message, c
             mvwprintw (popup_win, 3 + message_lines_cnt + tmp_helper_counter++, 1, "* Буквы верхнего регистра.");
         if (mode & VMASK_DIGITS)
             mvwprintw (popup_win, 3 + message_lines_cnt + tmp_helper_counter++, 1, "* Цифры.");
+        if (mode & VMASK_PUNCTS)
+            mvwprintw (popup_win, 3 + message_lines_cnt + tmp_helper_counter++, 1, "* Точки и запятые.");
     }
 
     /* Создать окно для формы */
