@@ -19,7 +19,8 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
               ANIMAL_ARIAL_COL_WIDTH = getmax(14, (int) ((ANIMAL_TOTAL_COL_WIDTH - 2) / 3)),  // Ширина колонки с Ареалом обитания
               ANIMAL_BREED_COL_WIDTH = getmax(6, ANIMAL_TOTAL_COL_WIDTH - 2 - ANIMAL_NAME_COL_WIDTH - ANIMAL_ARIAL_COL_WIDTH);  // Ширина колонки с Породой животного
     const int DATA_ROWS_CNT = getmaxy(win) - 4 - 1;  // Количество строк с данными в таблице
-    int offset_from_header = 0;
+    int offset_from_header = 0,
+        some_counter = 0;
     
     wmove(win, 0, 0);
 
@@ -106,6 +107,8 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
             wprintw(win, "│%*ls│", DATE_COL_WIDTH, date_tmp);
             
             if (offset_from_header + 1 == selected_row) wattroff(win, TUI_HIGHLIGHT_ITEM_STYLE);
+
+            some_counter++;
         }
     }
 
@@ -122,4 +125,6 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
     for (int i = 0; i < PRODUCT_COST_COL_WIDTH;  i++) waddstr(win, "─"); waddstr(win, "┴");
     for (int i = 0; i < DATE_COL_WIDTH;          i++) waddstr(win, "─");
     waddstr(win, "┘");
+
+    return some_counter;
 }

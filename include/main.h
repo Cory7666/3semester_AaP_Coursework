@@ -14,18 +14,35 @@ const menu_t MAIN_MENU = {
 const menu_t SAVE_OR_LOAD_MENU = {
     L" Загрузить данные из файла ",
     L"  Сохранить данные в файл  ",
+    L"     Отменить действие     ",
     NULL
 };
 
 const menu_t FILE_FORMATS_MENU = {
-    L" .bin ",
-    L" .csv ",
+    L"        .bin       ",
+    L"        .csv       ",
+    L" Отменить действие ",
     NULL
 };
 
 const menu_t LIST_TYPES_MENU = {
     L"    Все данные    ",
     L" Результат поиска ",
+    NULL
+};
+
+const menu_t SELECT_SEARCH_FIELD_MENU = {
+    L"   По номеру позиции   ",
+    L"          По ID        ",
+    L"    По номеру волера   ",
+    L"        По ареалу      ",
+    L"   По названию породы  ",
+    L"   По имени животного  ",
+    L"    По типу продукта   ",
+    L"    По весу продукта   ",
+    L" По стоимости продукта ",
+    L"  По дате поступления  ",
+    L"   Отменить действие   ",
     NULL
 };
 

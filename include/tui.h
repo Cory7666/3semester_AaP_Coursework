@@ -51,9 +51,9 @@ int tui_draw_popup_form (const wchar_t *, const wchar_t *, const wchar_t *, wcha
 void tui_draw_popup_date (const wchar_t *, const wchar_t *, udate_t *);
 
 /* Отобразить окно с редактированием информации */
-int tui_popup_edit_element_data (const wchar_t *, list_data_t *);
+int  tui_popup_edit_element_data (const wchar_t *, list_data_t *, int);
 /* Отобразить окно с информацией об элементе */
-int tui_popup_show_only_element (const wchar_t *, const list_elem_t *);
+void tui_popup_show_only_element (const wchar_t *, const list_elem_t *);
 
 /*
  * Нарисовать таблицу в выбранном окне, отступив от начала списка на num_page страниц.

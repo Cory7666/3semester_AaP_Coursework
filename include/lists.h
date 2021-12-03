@@ -41,6 +41,8 @@ enum DATA_FIELDS
 #define WEIGHT_DGT_CNT   7
 #define COST_DGT_CNT     7
 #define CAGE_NUM_DGT_CNT 7
+#define POSITION_DGT_CNT 4
+#define ID_DGT_CNT       4
 
 
 
@@ -121,6 +123,8 @@ void lists_InsertAsListsHead (list_obj_t *, list_elem_t *);
 void lists_InsertAsListsTail (list_obj_t *, list_elem_t *);
 /* Поиск элемента в объекте списка по значению поля */
 list_elem_t * lists_SearchElementByField (list_obj_t *, field_num_t, void *);
+/* Поиск элемента, начиная с текущего и включая в поиск текущий */
+list_elem_t * lists_SearchElementByFieldFromThisElement (list_elem_t *, field_num_t, void *);
 /* Сравнить элементы по одному полю */
 int lists_CompareElementsByOneField (const list_elem_t *, const list_elem_t *, const field_num_t);
 /* Сравнить элементы по всем полям (вначале по приоритетному) */

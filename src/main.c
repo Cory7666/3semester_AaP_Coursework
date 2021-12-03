@@ -19,7 +19,8 @@ int main ()
                * save_list = NULL,                            // Список, который нужно сохранить в файл
                * search_results_list = lists_CreateNewListObject ();  // Список с результатами поиска
     int curr_selected_page = 1,
-        curr_selected_table_row = 1;
+        curr_selected_table_row = 1,
+        drawed_rows = 0;
 
     draw_win_background (stdscr);
     refresh ();
@@ -45,20 +46,21 @@ int main ()
                     update_panels ();
 
                     // Таблица
-                    WINDOW * win_table = derwin (win_main, getmaxy(win_main) - (3 + 1 + 1 + 6 + 3 + 1), getmaxx (win_main) - 4, 4, 2);
+                    WINDOW * win_table = derwin (win_main, getmaxy(win_main) - (3 + 1 + 1 + 6 + 3 + 1 + 1), getmaxx (win_main) - 4, 4, 2);
                     PANEL  * panel_table = new_panel (win_table);
 
                     /* Отрисовать всё и вся */
                     tui_draw_popup_header (win_main, L"Таблица данных");
 
                     /* Отрисовать подсказки ввода */
-                    mvwprintw (win_main, getmaxy(win_main) - 11, 1, "Действия над таблицей:                    ");
-                    mvwprintw (win_main, getmaxy(win_main) - 10, 1, "  (← →) Выбор страницы данных.            ");
-                    mvwprintw (win_main, getmaxy(win_main) - 9,  1, "  (↑ ↓) Выбор строки в таблице.           ");
-                    mvwprintw (win_main, getmaxy(win_main) - 8,  1, "  (ENTER) Подтвердить выбор строки.       ");
-                    mvwprintw (win_main, getmaxy(win_main) - 7,  1, "Действия над данными:                     ");
-                    mvwprintw (win_main, getmaxy(win_main) - 6,  1, "  (P) Добавить данные.                    ");
-                    mvwprintw (win_main, getmaxy(win_main) - 5,  1, "  (W) Сохранить в файл/Загрузить из файла.");
+                    mvwprintw (win_main, getmaxy(win_main) - 12, 1, "Действия над таблицей:                    ");
+                    mvwprintw (win_main, getmaxy(win_main) - 11, 1, "  (← →) Выбор страницы данных.            ");
+                    mvwprintw (win_main, getmaxy(win_main) - 10, 1, "  (↑ ↓) Выбор строки в таблице.           ");
+                    mvwprintw (win_main, getmaxy(win_main) - 9,  1, "Действия над данными:                     ");
+                    mvwprintw (win_main, getmaxy(win_main) - 8,  1, "  (P) Добавить данные.                    ");
+                    mvwprintw (win_main, getmaxy(win_main) - 7,  1, "  (W) Сохранить в файл/Загрузить из файла.");
+                    mvwprintw (win_main, getmaxy(win_main) - 6,  1, "  (R) Просмотреть подробную информаци.    ");
+                    mvwprintw (win_main, getmaxy(win_main) - 5,  1, "  (G) Редактировать элемент.              ");
                     mvwprintw (win_main, getmaxy(win_main) - 4,  1, "  (F) Поиск.                              ");
                     mvwprintw (win_main, getmaxy(win_main) - 3,  1, "  (T) Задание по варианту.                ");
                     mvwprintw (win_main, getmaxy(win_main) - 2,  1, "  (E) Выйти из текущего окна.             ");
@@ -71,8 +73,8 @@ int main ()
                             // Действие "Добавить элемент" 
                             case L'P': case L'p':
                                 {
-                                    udate_t d;
-                                    switch (tui_popup_edit_element_data (L"Данные элемента", &d))
+                                    list_data_t  d;
+                                    switch (tui_popup_edit_element_data (L"Данные элемента", &d, 1))
                                     {
                                         case TUI_ADD_ELEMENT_FLAG | TUI_AT_BEGIN_FLAG:
                                             lists_InsertAsListsHead (main_list, lists_CreateNewElement(&d));
@@ -84,6 +86,227 @@ int main ()
                                     }
 
                                 }
+                                break;
+                            
+                            // Действие "Подробная информация"
+                            case L'R': case L'r':
+                                {
+                                    length_t position = (curr_selected_page - 1) * (getmaxy(win_table) - 5) + curr_selected_table_row;
+                                    list_elem_t * element = lists_SearchElementByField (main_list, LIST_POSITION, (void *) &position);
+
+                                    if (element)
+                                        tui_popup_show_only_element (L"Информация о вольере", element);
+                                    else
+                                        tui_draw_popup_text_message (L"ОШИБКА", L"ОШИБКА: не удалось найти элемент.\nСкорее всего, это произошло потому, что отсутствуют данные.");
+                                
+                                    update_panels ();
+                                }
+                                break;
+                            
+                            // Действие "Редактировать элемент"
+                            case L'G': case L'g':
+                                {
+                                    length_t position = (curr_selected_page - 1) * (getmaxy(win_table) - 5) + curr_selected_table_row;
+                                    list_elem_t * element = lists_SearchElementByField (main_list, LIST_POSITION, (void *) &position);
+                                    int correct_code = 1;
+
+                                    if (element)
+                                    {
+                                        while (!correct_code)
+                                        {
+                                            
+                                        }
+                                        
+
+                                        tui_popup_edit_element_data (L"Редактировать запись", &element->data, 0);
+                                    }
+                                    else
+                                        tui_draw_popup_text_message (L"ОШИБКА", L"ОШИБКА: не удалось найти элемент.\nСкорее всего, это произошло потому, что отсутствуют данные.");
+                                
+                                    update_panels ();
+                                }
+                                break;
+                            
+                            // Действие "Поиск"
+                            case L'F': case L'f':
+                                {
+                                    selected_key = tui_draw_popup_select (
+                                        L"Выбор поля для поиска",
+                                        L"Выберите поле для поиска.\nПосле чего необходимо будет ввести конкретное значений.",
+                                        SELECT_SEARCH_FIELD_MENU
+                                    );
+
+                                    void * universal_ptr = NULL;
+                                    list_id_t tmp_id = 0;
+                                    length_t tmp_int = 0;
+                                    weight_t tmp_weight  = 0.0;
+                                    cost_t tmp_cost  = 0.0;
+                                    udate_t tmp_date = {.D = 1, .M = 9, .Y = 2021};
+
+                                    switch (selected_key)
+                                    {
+                                        case LIST_POSITION:
+                                            tui_draw_popup_form (
+                                                L"Поиск по позиции",
+                                                L"Введите требуемый номер позиции.",
+                                                L"POS",
+                                                tmp_wcs,
+                                                POSITION_DGT_CNT,
+                                                VMASK_DIGITS
+                                            );
+                                            tmp_int = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_int;
+                                            break;
+                                        
+                                        case LIST_ID:
+                                            tui_draw_popup_form (
+                                                L"",
+                                                L"",
+                                                L"",
+                                                tmp_wcs,
+                                                POSITION_DGT_CNT,
+                                                VMASK_DIGITS
+                                            );
+                                            tmp_id = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_id;
+                                            break;
+                                        
+                                        case LIST_CAGE_NUMBER:
+                                            tui_draw_popup_form (
+                                                L"",
+                                                L"",
+                                                L"",
+                                                tmp_wcs,
+                                                POSITION_DGT_CNT,
+                                                VMASK_DIGITS
+                                            );
+                                            tmp_id = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_id;
+                                            break;
+                                        
+                                        case LIST_ANIMAL_AREAL:
+                                            tui_draw_popup_form (
+                                                L"",
+                                                L"",
+                                                L"",
+                                                tmp_wcs,
+                                                POSITION_DGT_CNT,
+                                                VMASK_DIGITS
+                                            );
+                                            tmp_id = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_id;
+                                            break;
+                                        
+                                        case LIST_ANIMAL_BREED:
+                                            tui_draw_popup_form (
+                                                L"",
+                                                L"",
+                                                L"",
+                                                tmp_wcs,
+                                                POSITION_DGT_CNT,
+                                                VMASK_DIGITS
+                                            );
+                                            tmp_id = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_id;
+                                            break;
+                                        
+                                        case LIST_ANIMAL_NAME:
+                                            tui_draw_popup_form (
+                                                L"",
+                                                L"",
+                                                L"",
+                                                tmp_wcs,
+                                                POSITION_DGT_CNT,
+                                                VMASK_DIGITS
+                                            );
+                                            tmp_id = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_id;
+                                            break;
+                                        
+                                        case LIST_PRODUCT_TYPE:
+                                            tui_draw_popup_form (
+                                                L"",
+                                                L"",
+                                                L"",
+                                                tmp_wcs,
+                                                POSITION_DGT_CNT,
+                                                VMASK_DIGITS
+                                            );
+                                            tmp_id = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_id;
+                                            break;
+                                        
+                                        case LIST_PRODUCT_WEIGHT:
+                                            tui_draw_popup_form (
+                                                L"",
+                                                L"",
+                                                L"",
+                                                tmp_wcs,
+                                                POSITION_DGT_CNT,
+                                                VMASK_DIGITS
+                                            );
+                                            tmp_id = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_id;
+                                            break;
+                                        
+                                        case LIST_PRODUCT_COST:
+                                            tui_draw_popup_form (
+                                                L"",
+                                                L"",
+                                                L"",
+                                                tmp_wcs,
+                                                POSITION_DGT_CNT,
+                                                VMASK_DIGITS
+                                            );
+                                            tmp_id = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_id;
+                                            break;
+                                        
+                                        case LIST_DATE:
+                                            tui_draw_popup_form (
+                                                L"",
+                                                L"",
+                                                L"",
+                                                tmp_wcs,
+                                                POSITION_DGT_CNT,
+                                                VMASK_DIGITS
+                                            );
+                                            tmp_id = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_id;
+                                            break;
+                                        
+                                        default:
+                                            tui_draw_popup_text_message (
+                                                L"Предупреждение",
+                                                L"Поиск данных был отменён пользователем."
+                                            );
+                                            break;
+                                    }
+                                }
+                                break;
+                            
+                            // Действие "Задание по варианту"
+                            case L'T': case L't':
+                                break;
+                            
+                            // Изменение выбранной строки
+                            case MKEY_ARROW_DOWN:
+                                if (curr_selected_table_row < drawed_rows)
+                                    curr_selected_table_row++;
+                                break;
+                            case MKEY_ARROW_UP:
+                                if (curr_selected_table_row > 1)
+                                    curr_selected_table_row--;
+                                break;
+                            
+                            // Изменение текущей страницы
+                            case MKEY_ARROW_LEFT:
+                                if (curr_selected_page > 1)
+                                    curr_selected_page--;
+                                break;
+                            case MKEY_ARROW_RIGHT:
+                                if (curr_selected_page < main_list->_length_ / (getmaxy(win_table) - 5) + !!(main_list->_length_ % (getmaxy(win_table) - 5)))
+                                    curr_selected_page++;
                                 break;
                             
                             // Действие "Работа с файлами"
@@ -106,6 +329,15 @@ int main ()
                                                     FILE_FORMATS_MENU
                                                 );
                                         
+                                        if (selected_key == 3)
+                                        {
+                                            tui_draw_popup_text_message (
+                                                L"Предупреждение",
+                                                L"Загрузка данных из файла отменена пользователем."
+                                            );
+                                            break;
+                                        }
+                                        
                                         /* Обнулить значение tmp_wcs и Запросить имя загружаемого файла файла */
                                         memset (tmp_wcs, 0, sizeof(tmp_wcs));
                                         tui_draw_popup_form (
@@ -114,7 +346,7 @@ int main ()
                                             L" Введите имя файла",
                                             tmp_wcs,
                                             FILENAME_MAX_LENGTH,
-                                            VMASK_ANY_CHAR | VMASK_DIGITS
+                                            VMASK_ANY_CHAR | VMASK_DIGITS | VMASK_PUNCTS
                                         );
 
                                         /* Проверить на существование файл */
@@ -206,145 +438,10 @@ int main ()
                                 }
 
                                 break;
-
-                            // Действие "Поиск"
-                            case L'F': case L'f':
-                                break;
-                            
-                            // Действие "Задание по варианту"
-                            case L'T': case L't':
-                                break;
-                            
-                            // Изменение страницы
-                            case MKEY_ARROW_DOWN:
-                                if (curr_selected_table_row < getmaxy(win_table) - 4)
-                                    curr_selected_table_row++;
-                                break;
-                            case MKEY_ARROW_UP:
-                                if (curr_selected_table_row > 1)
-                                    curr_selected_table_row--;
-                                break;
-                            
-                            // Изменение строки таблицы
-                            case MKEY_ARROW_LEFT:
-                                if (curr_selected_page > 1)
-                                    curr_selected_page--;
-                                break;
-                            case MKEY_ARROW_RIGHT:
-                                if (curr_selected_page < main_list->_length_ / (getmaxy(win_table) - 4) + !!(main_list->_length_ % (getmaxy(win_table) - 4)))
-                                    curr_selected_page++;
-                                break;
-                            
-                            case MKEY_ENTER:
-                                {
-                                    /* Создать дополнительные окна */
-                                    WINDOW * win_add_element = newwin (LINES - 2, COLS - 4, 1, 2);
-                                    PANEL  * panel_add_element = new_panel (win_add_element);
-                                    update_panels ();
-
-                                    WINDOW * win_elem_info = derwin (win_add_element, getmaxy(win_add_element) - 3 - 3, getmaxx(win_add_element) - 2, 3, 1);
-                                    PANEL  * panel_elem_info = new_panel (win_elem_info);
-                                    update_panels ();
-
-                                    length_t position = curr_selected_page * (getmaxy(win_table) - 4) + curr_selected_table_row - 1;
-                                    list_elem_t * elem = lists_SearchElementByField (main_list, LIST_POSITION, (void *) &position);
-                                    mkey_t selected_field = 2;
-                                    /* Помощь при ВВОДе */
-
-                                    mvwprintw (win_add_element, getmaxy(win_add_element) - 2, 1, "(P) Удалить. (I) Редактирование (ВКЛ ). (E) Выйти.");
-
-                                    selected_key = MKEY_NULL;
-
-                                    do
-                                    {
-                                        switch (selected_key)
-                                        {
-                                            case MKEY_TAB:
-                                                if (selected_field < 9) selected_field++;
-                                                else selected_field = 1;
-                                                break;
-                                            
-                                            case MKEY_ENTER: case MKEY_ARROW_RIGHT:
-                                                switch (selected_field)
-                                                {
-                                                    case 1:
-                                                        tui_draw_popup_text_message (L"Операция непозволена", L"Вы не можете установить ID. Это не разрешено.");
-                                                        break;
-                                                    case 2:
-                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
-                                                        int2wcs (elem->data.cage_num, tmp_wcs);  // Записать в неё .cage_num
-                                                        tui_draw_popup_form (L"Ввод номера вольера", L"Введите номер вольера.", L"#", tmp_wcs, 7, VMASK_DIGITS);
-                                                        elem->data.cage_num = wcs2int (tmp_wcs); // Записать в .cage_num
-                                                        break;
-                                                    case 3:
-                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
-                                                        wcscpy (tmp_wcs, elem->data.animal.areal);
-                                                        tui_draw_popup_form (L"Ввод ариала", L"Введите ариал обитания животного.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, ANIMAL_AREAL_MAX_LEN, VMASK_ANY_CHAR);
-                                                        wcscpy (elem->data.animal.areal, tmp_wcs);
-                                                        break;
-                                                    case 4:
-                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
-                                                        wcscpy (tmp_wcs, elem->data.animal.breed);
-                                                        tui_draw_popup_form (L"Ввод породы", L"Введите название породы животного.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, ANIMAL_BREED_MAX_LEN, VMASK_ANY_CHAR);
-                                                        wcscpy (elem->data.animal.breed, tmp_wcs);
-                                                        break;
-                                                    case 5:
-                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
-                                                        wcscpy (tmp_wcs, elem->data.animal.name);
-                                                        tui_draw_popup_form (L"Ввод имени", L"Введите имя животного.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, ANIMAL_NAME_MAX_LEN, VMASK_ANY_CHAR);
-                                                        wcscpy (elem->data.animal.name, tmp_wcs);
-                                                        break;
-                                                    case 6:
-                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
-                                                        wcscpy (tmp_wcs, elem->data.products.type);
-                                                        tui_draw_popup_form (L"Ввод типа продукта", L"Введите тип продуктов.", L"НЕТ ЗНАЧЕНИЯ", tmp_wcs, PRODUCT_TYPE_MAX_LEN, VMASK_ANY_CHAR);
-                                                        wcscpy (elem->data.products.type, tmp_wcs);
-                                                        break;
-                                                    case 7:
-                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
-                                                        float2wcs (elem->data.products.weight, tmp_wcs);  // Записать в неё .weight
-                                                        tui_draw_popup_form (L"Ввод веса", L"Введите вес продуктов.", L"Вес", tmp_wcs, 8, VMASK_DIGITS);
-                                                        elem->data.products.weight = wcs2float (tmp_wcs); // Записать в .weight
-                                                        break;
-                                                    case 8:
-                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
-                                                        float2wcs (elem->data.products.cost, tmp_wcs);  // Записать в неё .cost
-                                                        tui_draw_popup_form (L"Ввод стоимости", L"Введите стоимость продуктов.", L"Цена", tmp_wcs, 8, VMASK_DIGITS);
-                                                        elem->data.products.cost = wcs2float (tmp_wcs); // Записать в .cost
-                                                        break;
-                                                    case 9:
-                                                        memset (tmp_wcs, 0, sizeof(tmp_wcs));    // Обнулить tmp_wcs
-                                                        tui_draw_popup_date (L"Ввод даты", L"Введите дату поступления животного.", &elem->data.date);
-                                                        break;
-                                                }
-                                                break;
-                                            
-                                            case L'P': case L'p':
-                                                if (elem == main_list->head)
-                                                    main_list->head = elem->next;
-                                                lists_DeleteElement (elem);
-                                                main_list->_length_--;
-                                                break;
-                                        }
-
-                                        tui_print_element_info_window (win_elem_info, selected_field, elem);
-
-                                        update_panels ();
-                                        doupdate ();
-                                    }
-                                    while (elem != NULL && (selected_key = getwchar ()) != L'E' && selected_key != L'e');
-
-
-                                    /* Удалить дополнительные окна */
-                                    del_panel (panel_elem_info);
-                                    del_panel (panel_add_element);
-                                    delwin (win_elem_info);
-                                    delwin (win_add_element);
-                                }
-                                break;
                         }
 
-                        tui_draw_table_in_window (win_table, *main_list, curr_selected_page, curr_selected_table_row);
+                        wclear (win_table);
+                        drawed_rows = tui_draw_table_in_window (win_table, *main_list, curr_selected_page, curr_selected_table_row);
 
                         update_panels ();
                         doupdate ();

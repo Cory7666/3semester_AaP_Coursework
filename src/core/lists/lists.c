@@ -131,14 +131,18 @@ void lists_InsertAsListsTail (list_obj_t * list, list_elem_t * e)
 
 list_elem_t * lists_SearchElementByField (list_obj_t * list, field_num_t field, void * data)
 {
-    /* Немедленный выход из подпрограммы, если передан пустой указатель на объект списка */
-    if (!list) return NULL;
+    return lists_SearchElementByFieldFromThisElement (list->head, field, data);
+}
+
+list_elem_t * lists_SearchElementByFieldFromThisElement (list_elem_t * e, field_num_t field, void * data)
+{
+    /* Немедленный выход из подпрограммы, если передан пустой указатель на элемент' списка */
+    if (!e) return NULL;
     /* Немедленный выход из подпрограммы, если передан некорректный номер поля */
     if ( field < LIST_POSITION || field > LIST_DATE ) return NULL;
 
     length_t      position_counter = 1;
     short         exit_flag        = 0;
-    list_elem_t * e                = list->head;
 
     /* Пытаться найти элемент, пока не будет достигнут конец списка или искомый элемент не будет найден */
     while (e && e->next && !exit_flag)
