@@ -17,6 +17,7 @@ int main ()
     mkey_t selected_key = 0;
     list_obj_t * main_list = lists_CreateNewListObject (),    // Список, содержащий все данные
                * save_list = NULL,                            // Список, который нужно сохранить в файл
+               * selected_table_list = main_list,             // Список, который нужно отображить в таблице
                * search_results_list = lists_CreateNewListObject ();  // Список с результатами поиска
     int curr_selected_page = 1,
         curr_selected_table_row = 1,
@@ -92,7 +93,7 @@ int main ()
                             case L'R': case L'r':
                                 {
                                     length_t position = (curr_selected_page - 1) * (getmaxy(win_table) - 5) + curr_selected_table_row;
-                                    list_elem_t * element = lists_SearchElementByField (main_list, LIST_POSITION, (void *) &position);
+                                    list_elem_t * element = lists_SearchElementByField (selected_table_list, LIST_POSITION, (void *) &position);
 
                                     if (element)
                                         tui_popup_show_only_element (L"Информация о вольере", element);
@@ -107,7 +108,7 @@ int main ()
                             case L'G': case L'g':
                                 {
                                     length_t position = (curr_selected_page - 1) * (getmaxy(win_table) - 5) + curr_selected_table_row;
-                                    list_elem_t * element = lists_SearchElementByField (main_list, LIST_POSITION, (void *) &position);
+                                    list_elem_t * element = lists_SearchElementByField (selected_table_list, LIST_POSITION, (void *) &position);
                                     int correct_code = 1;
 
                                     if (element)
@@ -130,6 +131,15 @@ int main ()
                             // Действие "Поиск"
                             case L'F': case L'f':
                                 {
+                                    if (selected_table_list->_length_ < 1)
+                                    {
+                                        tui_draw_popup_text_message (
+                                            L"ОШИБКА",
+                                            L"Для начала заполните список."
+                                        );
+                                        break;
+                                    }
+
                                     selected_key = tui_draw_popup_select (
                                         L"Выбор поля для поиска",
                                         L"Выберите поле для поиска.\nПосле чего необходимо будет ввести конкретное значений.",
@@ -142,6 +152,7 @@ int main ()
                                     weight_t tmp_weight  = 0.0;
                                     cost_t tmp_cost  = 0.0;
                                     udate_t tmp_date = {.D = 1, .M = 9, .Y = 2021};
+                                    list_elem_t * tmp_element_ptr = NULL;
 
                                     switch (selected_key)
                                     {
@@ -160,9 +171,9 @@ int main ()
                                         
                                         case LIST_ID:
                                             tui_draw_popup_form (
+                                                L"Поиск по ID",
                                                 L"",
-                                                L"",
-                                                L"",
+                                                L"ID",
                                                 tmp_wcs,
                                                 POSITION_DGT_CNT,
                                                 VMASK_DIGITS
@@ -173,106 +184,98 @@ int main ()
                                         
                                         case LIST_CAGE_NUMBER:
                                             tui_draw_popup_form (
+                                                L"Поиск по номеру вольера",
                                                 L"",
-                                                L"",
-                                                L"",
+                                                L"вольер",
                                                 tmp_wcs,
                                                 POSITION_DGT_CNT,
                                                 VMASK_DIGITS
                                             );
-                                            tmp_id = wcs2int (tmp_wcs);
-                                            universal_ptr = &tmp_id;
+                                            tmp_int = wcs2int (tmp_wcs);
+                                            universal_ptr = &tmp_int;
                                             break;
                                         
                                         case LIST_ANIMAL_AREAL:
                                             tui_draw_popup_form (
-                                                L"",
-                                                L"",
-                                                L"",
+                                                L"Поиск по ареалу",
+                                                L"Введите ареал обитания животного.",
+                                                L"ареал",
                                                 tmp_wcs,
                                                 POSITION_DGT_CNT,
                                                 VMASK_DIGITS
                                             );
-                                            tmp_id = wcs2int (tmp_wcs);
-                                            universal_ptr = &tmp_id;
+                                            universal_ptr = tmp_wcs;
                                             break;
                                         
                                         case LIST_ANIMAL_BREED:
                                             tui_draw_popup_form (
-                                                L"",
-                                                L"",
-                                                L"",
+                                                L"Поиск по породе",
+                                                L"Введите породу животного.",
+                                                L"порода",
                                                 tmp_wcs,
                                                 POSITION_DGT_CNT,
                                                 VMASK_DIGITS
                                             );
-                                            tmp_id = wcs2int (tmp_wcs);
-                                            universal_ptr = &tmp_id;
+                                            universal_ptr = tmp_wcs;
                                             break;
                                         
                                         case LIST_ANIMAL_NAME:
                                             tui_draw_popup_form (
-                                                L"",
-                                                L"",
-                                                L"",
+                                                L"Поиск по имени",
+                                                L"Введите имя животного.",
+                                                L"имя",
                                                 tmp_wcs,
                                                 POSITION_DGT_CNT,
                                                 VMASK_DIGITS
                                             );
-                                            tmp_id = wcs2int (tmp_wcs);
-                                            universal_ptr = &tmp_id;
+                                            universal_ptr = tmp_wcs;
                                             break;
                                         
                                         case LIST_PRODUCT_TYPE:
                                             tui_draw_popup_form (
-                                                L"",
-                                                L"",
-                                                L"",
+                                                L"Поиск по типу",
+                                                L"Введите тип продукта.",
+                                                L"тип",
                                                 tmp_wcs,
                                                 POSITION_DGT_CNT,
                                                 VMASK_DIGITS
                                             );
-                                            tmp_id = wcs2int (tmp_wcs);
-                                            universal_ptr = &tmp_id;
+                                            universal_ptr = tmp_wcs;
                                             break;
                                         
                                         case LIST_PRODUCT_WEIGHT:
                                             tui_draw_popup_form (
-                                                L"",
-                                                L"",
-                                                L"",
+                                                L"Поиск по весу",
+                                                L"Введите вес.",
+                                                L"вес",
                                                 tmp_wcs,
                                                 POSITION_DGT_CNT,
                                                 VMASK_DIGITS
                                             );
-                                            tmp_id = wcs2int (tmp_wcs);
-                                            universal_ptr = &tmp_id;
+                                            tmp_weight = wcs2float (tmp_wcs);
+                                            universal_ptr = &tmp_weight;
                                             break;
                                         
                                         case LIST_PRODUCT_COST:
                                             tui_draw_popup_form (
-                                                L"",
-                                                L"",
-                                                L"",
+                                                L"Посик по стоимоти",
+                                                L"Введите стоимость.",
+                                                L"стоимос",
                                                 tmp_wcs,
                                                 POSITION_DGT_CNT,
                                                 VMASK_DIGITS
                                             );
-                                            tmp_id = wcs2int (tmp_wcs);
-                                            universal_ptr = &tmp_id;
+                                            tmp_cost = wcs2float (tmp_wcs);
+                                            universal_ptr = &tmp_cost;
                                             break;
                                         
                                         case LIST_DATE:
-                                            tui_draw_popup_form (
-                                                L"",
-                                                L"",
-                                                L"",
-                                                tmp_wcs,
-                                                POSITION_DGT_CNT,
-                                                VMASK_DIGITS
+                                            tui_draw_popup_date (
+                                                L"Поиск по дате",
+                                                L"Введите дату.",
+                                                &tmp_date
                                             );
-                                            tmp_id = wcs2int (tmp_wcs);
-                                            universal_ptr = &tmp_id;
+                                            universal_ptr = &tmp_date;
                                             break;
                                         
                                         default:
@@ -282,6 +285,18 @@ int main ()
                                             );
                                             break;
                                     }
+
+                                    if (selected_key > LIST_DATE)
+                                        break;
+
+                                    /* Найти все совпадения */
+                                    tmp_element_ptr = selected_table_list->head;
+                                    while (tmp_element_ptr = lists_SearchElementByFieldFromThisElement (tmp_element_ptr, selected_key, universal_ptr))
+                                    {
+                                        lists_InsertAsListsTail (search_results_list, tmp_element_ptr);
+                                        tmp_element_ptr = tmp_element_ptr->next;
+                                    }
+                                    selected_table_list = search_results_list;
                                 }
                                 break;
                             
@@ -441,7 +456,7 @@ int main ()
                         }
 
                         wclear (win_table);
-                        drawed_rows = tui_draw_table_in_window (win_table, *main_list, curr_selected_page, curr_selected_table_row);
+                        drawed_rows = tui_draw_table_in_window (win_table, *selected_table_list, curr_selected_page, curr_selected_table_row);
 
                         update_panels ();
                         doupdate ();
