@@ -46,6 +46,12 @@ const menu_t SELECT_SEARCH_FIELD_MENU = {
     NULL
 };
 
+const menu_t SORT_ORDER_LIST = {
+    L" По возрастанию [или A→Z] ",
+    L"   По убыванию [или Z→A]  ",
+    NULL
+};
+
 
 /************************************************************************************
  * Перечисление дополнительны функций, которые должны быть здесь просто потому что. *
@@ -55,3 +61,5 @@ const menu_t SELECT_SEARCH_FIELD_MENU = {
  * Нарисовать задний фон для заданного окна.
  */
 void draw_win_background (WINDOW *);
+/* Подтвердить действие */
+int tui_confirm_action ();

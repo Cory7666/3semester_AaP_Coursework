@@ -37,7 +37,7 @@ int tui_popup_edit_element_data (const wchar_t * title, list_data_t * edata, int
         switch (key)
         {
             case MKEY_TAB:
-                if (selected_field < 9 - (!!create_new_element_mode))
+                if (selected_field < 9 - (!create_new_element_mode))
                     selected_field++;
                 else
                     selected_field = 1;

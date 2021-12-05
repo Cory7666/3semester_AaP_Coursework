@@ -54,21 +54,29 @@ int main ()
                     tui_draw_popup_header (win_main, L"Таблица данных");
 
                     /* Отрисовать подсказки ввода */
-                    mvwprintw (win_main, getmaxy(win_main) - 10, 1, "Действия над таблицей:                                            ");
-                    mvwprintw (win_main, getmaxy(win_main) - 9,  1, "  (← →) Выбор страницы данных. (↑ ↓) Выбор строки в таблице.      ");
-                    mvwprintw (win_main, getmaxy(win_main) - 8,  1, "Действия над данными:                                             ");
-                    mvwprintw (win_main, getmaxy(win_main) - 7,  1, "  (P) Добавить данные.                                            ");
-                    mvwprintw (win_main, getmaxy(win_main) - 6,  1, "  (W) Сохранить в файл/Загрузить из файла.                        ");
-                    mvwprintw (win_main, getmaxy(win_main) - 5,  1, "  (R) Просмотреть подробную информаци. (G) Редактировать элемент. ");
-                    mvwprintw (win_main, getmaxy(win_main) - 4,  1, "  (F) Поиск.   (S) Сортировка.                                    ");
-                    mvwprintw (win_main, getmaxy(win_main) - 3,  1, "  (T) Задание по варианту.                                        ");
-                    mvwprintw (win_main, getmaxy(win_main) - 2,  1, "  (E) Выйти из текущего окна.                                     ");
+                    mvwprintw (win_main, getmaxy(win_main) - 11, 1, "Действия над таблицей:                                            ");
+                    mvwprintw (win_main, getmaxy(win_main) - 10, 1, "  (← →) Выбор страницы данных. (↑ ↓) Выбор строки в таблице.      ");
+                    mvwprintw (win_main, getmaxy(win_main) - 9,  1, "Действия над данными:                                             ");
+                    mvwprintw (win_main, getmaxy(win_main) - 8,  1, "  (P) Добавить данные.                                            ");
+                    mvwprintw (win_main, getmaxy(win_main) - 7,  1, "  (W) Сохранить в файл/Загрузить из файла.                        ");
+                    mvwprintw (win_main, getmaxy(win_main) - 6,  1, "  (R) Просмотреть подробную информаци. (G) Редактировать элемент. ");
+                    mvwprintw (win_main, getmaxy(win_main) - 5,  1, "  (F) Поиск.                           (S) Сортировка.            ");
+                    mvwprintw (win_main, getmaxy(win_main) - 4,  1, "  (T) Задание по варианту.                                        ");
+                    mvwprintw (win_main, getmaxy(win_main) - 3,  1, "  (E) Выйти из текущего окна.                                     ");
 
                     selected_key = MKEY_NULL;
                     do
                     {
+                        /* ---------------------------------------Обработка нажатой клавиши--------------------------------------- */
+
                         switch (selected_key)
                         {
+
+
+
+
+
+
                             // Действие "Добавить элемент" 
                             case L'P': case L'p':
                                 {
@@ -96,6 +104,11 @@ int main ()
                                 }
                                 break;
                             
+
+
+
+
+
                             // Действие "Подробная информация"
                             case L'R': case L'r':
                                 {
@@ -110,21 +123,25 @@ int main ()
                                     update_panels ();
                                 }
                                 break;
-                            
+
+
+
+
+
+
                             // Действие "Редактировать элемент"
                             case L'G': case L'g':
                                 {
                                     length_t position = (curr_selected_page - 1) * (getmaxy(win_table) - 5) + curr_selected_table_row;
                                     list_elem_t * element = lists_SearchElementByField (selected_table_list, LIST_POSITION, (void *) &position);
-                                    int correct_code = 1;
 
                                     if (element)
                                     {
-                                        while (!correct_code)
+                                        if (tui_confirm_action () == 1)
                                         {
-                                            
+                                            tui_draw_popup_text_message (L"Предупреждение", L"Действие отменено пользователем.");
+                                            break;
                                         }
-                                        
 
                                         tui_popup_edit_element_data (L"Редактировать запись", &element->data, 0);
                                     }
@@ -135,38 +152,58 @@ int main ()
                                 }
                                 break;
                             
+
+
+
+
+
                             // Действие "Сортировка"
                             case L'S': case L's':
                                 {
-                                    if (selected_table_list == search_results_list)
-                                    {
-                                        tui_draw_popup_text_message (
-                                            L"Предупреждение",
-                                            L"Невозможно отсортировать результаты поиска."
-                                        );
-                                        break;
-                                    }
-
                                     if (main_list->_length_ < 1)
                                     {
                                         tui_draw_popup_text_message (
-                                            L"Предупреждение",
+                                            L"Ошибка",
                                             L"Невозможно отсортировать пустую таблицу данных."
                                         );
                                         break;
                                     }
+
+                                    int sort_order = 0,
+                                        prio_field = 0;
+
+                                    prio_field = tui_draw_popup_select (L"Выбор приоритетного поля", L"Выберите приоритетное поле (поле, по которому в первую очередь будет выполнена сортировка).", SELECT_SEARCH_FIELD_MENU) - 1;
+
+                                    if (prio_field > LIST_DATE)
+                                    {
+                                        tui_draw_popup_text_message (L"Предупреждение", L"Сортировка была отменена пользователем.");
+                                        break;
+                                    }
+
+                                    if (tui_draw_popup_select (L"Выбор порядка сортировки", L"Выберите порядок сортировки.", SORT_ORDER_LIST) == 1)
+                                        sort_order = SORT_ASCENDING_ORDER;
+                                    else
+                                        sort_order = SORT_DESCENDING_ORDER;
+                                    
+
+
+                                    lists_SortListByField (selected_table_list, sort_order, prio_field);
+
+                                    tui_draw_popup_text_message (L"Удача", L"Сортировка завершена.");
                                 }
                                 break;
                             
+
+
+
+
+
                             // Действие "Поиск"
                             case L'F': case L'f':
                                 {
                                     if (selected_table_list->_length_ < 1)
                                     {
-                                        tui_draw_popup_text_message (
-                                            L"ОШИБКА",
-                                            L"Для начала заполните список."
-                                        );
+                                        tui_draw_popup_text_message (L"ОШИБКА", L"Для начала заполните список.");
                                         break;
                                     }
 
@@ -208,7 +245,7 @@ int main ()
                                                 L"",
                                                 L"ID",
                                                 tmp_wcs,
-                                                POSITION_DGT_CNT,
+                                                ID_DGT_CNT,
                                                 VMASK_DIGITS
                                             );
                                             tmp_id = wcs2int (tmp_wcs);
@@ -221,7 +258,7 @@ int main ()
                                                 L"",
                                                 L"вольер",
                                                 tmp_wcs,
-                                                POSITION_DGT_CNT,
+                                                CAGE_NUM_DGT_CNT,
                                                 VMASK_DIGITS
                                             );
                                             tmp_int = wcs2int (tmp_wcs);
@@ -234,7 +271,7 @@ int main ()
                                                 L"Введите ареал обитания животного.",
                                                 L"ареал",
                                                 tmp_wcs,
-                                                POSITION_DGT_CNT,
+                                                ANIMAL_AREAL_MAX_LEN,
                                                 VMASK_ANY_CHAR | VMASK_SPACES
                                             );
                                             universal_ptr = tmp_wcs;
@@ -246,7 +283,7 @@ int main ()
                                                 L"Введите породу животного.",
                                                 L"порода",
                                                 tmp_wcs,
-                                                POSITION_DGT_CNT,
+                                                ANIMAL_BREED_MAX_LEN,
                                                 VMASK_ANY_CHAR | VMASK_SPACES
                                             );
                                             universal_ptr = tmp_wcs;
@@ -258,7 +295,7 @@ int main ()
                                                 L"Введите имя животного.",
                                                 L"имя",
                                                 tmp_wcs,
-                                                POSITION_DGT_CNT,
+                                                ANIMAL_NAME_MAX_LEN,
                                                 VMASK_ANY_CHAR | VMASK_SPACES
                                             );
                                             universal_ptr = tmp_wcs;
@@ -270,34 +307,20 @@ int main ()
                                                 L"Введите тип продукта.",
                                                 L"тип",
                                                 tmp_wcs,
-                                                POSITION_DGT_CNT,
+                                                PRODUCT_TYPE_MAX_LEN,
                                                 VMASK_ANY_CHAR | VMASK_SPACES
                                             );
                                             universal_ptr = tmp_wcs;
                                             break;
                                         
                                         case LIST_PRODUCT_WEIGHT:
-                                            tui_draw_popup_form (
-                                                L"Поиск по весу",
-                                                L"Введите вес.",
-                                                L"вес",
-                                                tmp_wcs,
-                                                POSITION_DGT_CNT,
-                                                VMASK_DIGITS | VMASK_PUNCTS
-                                            );
+                                            tui_draw_popup_form (L"Поиск по весу", L"Введите вес.", L"вес", tmp_wcs, WEIGHT_DGT_CNT, VMASK_DIGITS | VMASK_PUNCTS);
                                             tmp_weight = wcs2float (tmp_wcs);
                                             universal_ptr = &tmp_weight;
                                             break;
                                         
                                         case LIST_PRODUCT_COST:
-                                            tui_draw_popup_form (
-                                                L"Посик по стоимоти",
-                                                L"Введите стоимость.",
-                                                L"стоимос",
-                                                tmp_wcs,
-                                                POSITION_DGT_CNT,
-                                                VMASK_DIGITS | VMASK_PUNCTS
-                                            );
+                                            tui_draw_popup_form (L"Поиcк по стоимоти", L"Введите стоимость.", L"стоимос", tmp_wcs, COST_DGT_CNT, VMASK_DIGITS | VMASK_PUNCTS);
                                             tmp_cost = wcs2float (tmp_wcs);
                                             universal_ptr = &tmp_cost;
                                             break;
@@ -328,13 +351,18 @@ int main ()
                                     {
                                         tmp_created_element = lists_CreateNewElement (&tmp_element_ptr->data);
                                         tmp_created_element->id = tmp_element_ptr->id;
-                                        lists_InsertAsListsTail (search_results_list, tmp_element_ptr);
+                                        lists_InsertAsListsTail (search_results_list, tmp_created_element);
                                         tmp_element_ptr = tmp_element_ptr->next;
                                     }
                                     selected_table_list = search_results_list;
                                 }
                                 break;
                             
+
+
+
+
+
                             // Действие "Задание по варианту"
                             case L'T': case L't':
                                 {
@@ -342,7 +370,7 @@ int main ()
                                     {
                                         tui_draw_popup_text_message (
                                             L"Предупреждение",
-                                            L"Невозможно выполнить задание по варианту в отношении результатам поиска."
+                                            L"Невозможно выполнить задание по варианту в отношении результатов поиска."
                                         );
                                         break;
                                     }
@@ -378,9 +406,16 @@ int main ()
                                     tmp_cost   = lists_GetCostForPeriod   (main_list, &d_1, &d_2);
 
                                     swprintf (tmp_wcs, sizeof(tmp_wcs), L"Общая масса за указанный период: %Lf г.\nОбщая стоимость продуктов за указанный период: %Lf Р.", tmp_weight, tmp_cost);
+
+                                    tui_draw_popup_text_message (L"Результаты", tmp_wcs);
                                 }
                                 break;
                             
+
+
+
+
+
                             // Изменение выбранной строки
                             case MKEY_ARROW_DOWN:
                                 if (curr_selected_table_row < drawed_rows)
@@ -391,6 +426,11 @@ int main ()
                                     curr_selected_table_row--;
                                 break;
                             
+
+
+
+
+
                             // Изменение текущей страницы
                             case MKEY_ARROW_LEFT:
                                 if (curr_selected_page > 1)
@@ -401,6 +441,11 @@ int main ()
                                     curr_selected_page++;
                                 break;
                             
+
+
+
+
+
                             // Действие "Работа с файлами"
                             case L'W': case L'w':
                                 // Выбор действия на файлами
@@ -576,5 +621,29 @@ void draw_win_background (WINDOW * win)
     for (size_t i = 0; i < (int) (getmaxx(win) * getmaxy(win) / 6); i++)
     {
         wprintw (win, "*@|@*-");
+    }
+}
+
+int tui_confirm_action ()
+{
+    int control_code = 0;
+    wchar_t tmp_message[100],
+            tmp_answer[10];
+    
+    while (1)
+    {
+        memset (tmp_message, 0, sizeof(tmp_message));
+        memset (tmp_answer, 0, sizeof(tmp_answer));
+
+        control_code = rand() % 8999 + 1000;
+
+        swprintf (tmp_message, sizeof(tmp_message), L"Для продолжения введите код ниже:\n    %4d\nДля отмены просто введите:\n    0.", control_code);
+
+        tui_draw_popup_form (L"", tmp_message, L"код", tmp_answer, 4, VMASK_DIGITS);
+
+        if (wcs2int (tmp_answer) == 0)
+            return 1;
+        else if (wcs2int (tmp_answer) == control_code)
+            return 0;
     }
 }

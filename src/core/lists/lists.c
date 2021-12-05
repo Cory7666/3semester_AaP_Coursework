@@ -159,16 +159,16 @@ list_elem_t * lists_SearchElementByFieldFromThisElement (list_elem_t * e, field_
                 exit_flag = ( *((list_id_t *) data) == e->data.cage_num );
                 break;
             case LIST_ANIMAL_AREAL:
-                exit_flag = wcscmp((wchar_t *) data, e->data.animal.areal);
+                exit_flag = !wcscmp((wchar_t *) data, e->data.animal.areal);
                 break;
             case LIST_ANIMAL_BREED:
-                exit_flag = wcscmp((wchar_t *) data, e->data.animal.breed);
+                exit_flag = !wcscmp((wchar_t *) data, e->data.animal.breed);
                 break;
             case LIST_ANIMAL_NAME:
-                exit_flag = wcscmp((wchar_t *) data, e->data.animal.name);
+                exit_flag = !wcscmp((wchar_t *) data, e->data.animal.name);
                 break;
             case LIST_PRODUCT_TYPE:
-                exit_flag = wcscmp((wchar_t *) data, e->data.products.type);
+                exit_flag = !wcscmp((wchar_t *) data, e->data.products.type);
                 break;
             case LIST_PRODUCT_WEIGHT:
                 exit_flag = ( *((weight_t *) data) == e->data.products.weight );
@@ -177,7 +177,7 @@ list_elem_t * lists_SearchElementByFieldFromThisElement (list_elem_t * e, field_
                 exit_flag = ( *((cost_t *) data) == e->data.products.cost );
                 break;
             case LIST_DATE:
-                exit_flag = datecmp((udate_t *) data, &e->data.date);
+                exit_flag = !datecmp((udate_t *) data, &e->data.date);
                 break;
         }
 

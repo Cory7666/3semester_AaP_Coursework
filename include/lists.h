@@ -10,8 +10,8 @@
 
 
 /* Способы сортировки */
-#define SORT_DESCENDING_ORDER (1)
-#define SORT_ASCENDING_ORDER  (-1)
+#define SORT_DESCENDING_ORDER (-1)
+#define SORT_ASCENDING_ORDER  (1)
 
 
 /* Условная привязка чисел к полю структуры элемента списка */
