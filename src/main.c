@@ -54,8 +54,8 @@ int main ()
                     tui_draw_popup_header (win_main, L"Таблица данных");
 
                     /* Отрисовать подсказки ввода */
-                    mvwprintw (win_main, getmaxy(win_main) - 11, 1, "Действия над таблицей:                                            ");
-                    mvwprintw (win_main, getmaxy(win_main) - 10, 1, "  (← →) Выбор страницы данных. (↑ ↓) Выбор строки в таблице.      ");
+                    mvwprintw (win_main, getmaxy(win_main) - 12, 1, "Действия над таблицей:                                            ");
+                    mvwprintw (win_main, getmaxy(win_main) - 11, 1, "  (← →) Выбор страницы данных. (↑ ↓) Выбор строки в таблице.      ");
                     mvwprintw (win_main, getmaxy(win_main) - 9,  1, "Действия над данными:                                             ");
                     mvwprintw (win_main, getmaxy(win_main) - 8,  1, "  (P) Добавить данные.                                            ");
                     mvwprintw (win_main, getmaxy(win_main) - 7,  1, "  (W) Сохранить в файл/Загрузить из файла.                        ");
@@ -440,6 +440,19 @@ int main ()
                                 if (curr_selected_page < main_list->_length_ / (getmaxy(win_table) - 5) + !!(main_list->_length_ % (getmaxy(win_table) - 5)))
                                     curr_selected_page++;
                                 break;
+
+
+
+
+
+
+                            // Изменение выбранной таблицы
+                            case L'N': case L'n':
+                                if (selected_table_list == search_results_list)
+                                    selected_table_list = main_list;
+                                else
+                                    selected_table_list = search_results_list;
+                                break;
                             
 
 
@@ -579,6 +592,11 @@ int main ()
 
                         wclear (win_table);
                         drawed_rows = tui_draw_table_in_window (win_table, *selected_table_list, curr_selected_page, curr_selected_table_row);
+
+                        if (selected_table_list == search_results_list)
+                            mvwprintw (win_main, getmaxy(win_main) - 10, 1, "  (N) Показать прошлые результаты поиска.                         ");
+                        else
+                            mvwprintw (win_main, getmaxy(win_main) - 10, 1, "  (N) Показать все данные.                                        ");
 
                         update_panels ();
                         doupdate ();
