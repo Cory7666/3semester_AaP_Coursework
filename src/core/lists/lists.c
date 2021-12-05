@@ -145,7 +145,7 @@ list_elem_t * lists_SearchElementByFieldFromThisElement (list_elem_t * e, field_
     short         exit_flag        = 0;
 
     /* Пытаться найти элемент, пока не будет достигнут конец списка или искомый элемент не будет найден */
-    while (e && e->next && !exit_flag)
+    while (e  && !exit_flag)
     {
         switch (field)
         {
@@ -181,7 +181,7 @@ list_elem_t * lists_SearchElementByFieldFromThisElement (list_elem_t * e, field_
                 break;
         }
 
-        if (exit_flag) return e;
+        if (exit_flag) break;
 
         e = e->next; position_counter++;
     }

@@ -131,6 +131,10 @@ int lists_CompareElementsByOneField (const list_elem_t *, const list_elem_t *, c
 int lists_CompareElements (const list_elem_t *, const list_elem_t *, const field_num_t);
 /* Сортировать список по возрастанию или по убыванию по приоритетному полю */
 void lists_SortListByField (list_obj_t *, const int, const field_num_t);
+/* Получить общую стоимость всех продуктов за определённый период */
+cost_t lists_GetCostForPeriod (const list_obj_t *, const udate_t *, const udate_t *);
+/* Получить общую массу продуктов за определённый период */
+weight_t lists_GetWeightForPeriod (const list_obj_t *, const udate_t *, const udate_t *);
 
 
 
