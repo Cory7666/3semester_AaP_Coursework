@@ -1,4 +1,4 @@
-.PHONY: all clean cleanall
+.PHONY: all clean cleanall lines
 
 
 
@@ -73,6 +73,8 @@ clean:
 cleanall: clean
 	find . -name "*.a" | while read -r file; do rm "$$file"; done
 	if [ -f "$(PROG_NAME)" ]; then rm -rf "$(PROG_NAME)"; fi
+lines:
+	wc --lines `find . -name "*.h"` `find . -name "*.c"`
 
 # $(PROG_NAME): $(SRC_PATH)/$(subst .c,.o,$(MAIN_FILE)) $(SRC_PATH)/libcore.a $(SRC_PATH)/libtui.a
 #	$(GCC) $(CFLAGS) -o $@ $^ $(CLIBS)

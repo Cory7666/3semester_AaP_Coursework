@@ -57,7 +57,7 @@ int main ()
                     mvwprintw (win_main, getmaxy(win_main) - 12, 1, "Действия над таблицей:                                            ");
                     mvwprintw (win_main, getmaxy(win_main) - 11, 1, "  (← →) Выбор страницы данных. (↑ ↓) Выбор строки в таблице.      ");
                     mvwprintw (win_main, getmaxy(win_main) - 9,  1, "Действия над данными:                                             ");
-                    mvwprintw (win_main, getmaxy(win_main) - 8,  1, "  (P) Добавить данные.                                            ");
+                    mvwprintw (win_main, getmaxy(win_main) - 8,  1, "  (P) Добавить данные.                 (V) Удалить данные.        ");
                     mvwprintw (win_main, getmaxy(win_main) - 7,  1, "  (W) Сохранить в файл/Загрузить из файла.                        ");
                     mvwprintw (win_main, getmaxy(win_main) - 6,  1, "  (R) Просмотреть подробную информаци. (G) Редактировать элемент. ");
                     mvwprintw (win_main, getmaxy(win_main) - 5,  1, "  (F) Поиск.                           (S) Сортировка.            ");
@@ -84,7 +84,7 @@ int main ()
                                     {
                                         tui_draw_popup_text_message (
                                             L"Предупреждение",
-                                            L"Невозможно добавить элемент в результаты поиска."
+                                            L"Невозможно добавить элемент в результаты поиска. Переключитель на таблицу со всеми данными."
                                         );
                                         break;
                                     }
@@ -123,6 +123,17 @@ int main ()
                                     update_panels ();
                                 }
                                 break;
+                            
+
+
+
+
+
+                            case L'V': case L'v':
+                                {
+                                    
+                                }
+                                break;
 
 
 
@@ -144,11 +155,17 @@ int main ()
                                         }
 
                                         tui_popup_edit_element_data (L"Редактировать запись", &element->data, 0);
+
+                                        if (selected_table_list == search_results_list)
+                                        {
+                                            lists_SearchElementByField(main_list, LIST_ID, &element->id)->data = element->data;
+                                        }
                                     }
                                     else
-                                        tui_draw_popup_text_message (L"ОШИБКА", L"ОШИБКА: не удалось найти элемент.\nСкорее всего, это произошло потому, что отсутствуют данные.");
+                                        tui_draw_popup_text_message (L"ОШИБКА", L"ОШИБКА: не удалось найти элемент.\nСкорее всего, это произошло потому, что в таблице отсутствуют данные.");
                                 
                                     update_panels ();
+                                    doupdate ();
                                 }
                                 break;
                             
@@ -160,7 +177,7 @@ int main ()
                             // Действие "Сортировка"
                             case L'S': case L's':
                                 {
-                                    if (main_list->_length_ < 1)
+                                    if (selected_table_list->_length_ < 1)
                                     {
                                         tui_draw_popup_text_message (
                                             L"Ошибка",
@@ -203,7 +220,7 @@ int main ()
                                 {
                                     if (selected_table_list->_length_ < 1)
                                     {
-                                        tui_draw_popup_text_message (L"ОШИБКА", L"Для начала заполните список.");
+                                        tui_draw_popup_text_message (L"ОШИБКА", L"В выбранной таблице отсутствуют данные. Заполните или смените таблицу.");
                                         break;
                                     }
 
@@ -266,50 +283,22 @@ int main ()
                                             break;
                                         
                                         case LIST_ANIMAL_AREAL:
-                                            tui_draw_popup_form (
-                                                L"Поиск по ареалу",
-                                                L"Введите ареал обитания животного.",
-                                                L"ареал",
-                                                tmp_wcs,
-                                                ANIMAL_AREAL_MAX_LEN,
-                                                VMASK_ANY_CHAR | VMASK_SPACES
-                                            );
+                                            tui_draw_popup_form (L"Поиск по ареалу", L"Введите ареал обитания животного.", L"ареал", tmp_wcs, ANIMAL_AREAL_MAX_LEN, VMASK_ANY_CHAR | VMASK_SPACES);
                                             universal_ptr = tmp_wcs;
                                             break;
                                         
                                         case LIST_ANIMAL_BREED:
-                                            tui_draw_popup_form (
-                                                L"Поиск по породе",
-                                                L"Введите породу животного.",
-                                                L"порода",
-                                                tmp_wcs,
-                                                ANIMAL_BREED_MAX_LEN,
-                                                VMASK_ANY_CHAR | VMASK_SPACES
-                                            );
+                                            tui_draw_popup_form (L"Поиск по породе", L"Введите породу животного.", L"порода", tmp_wcs, ANIMAL_BREED_MAX_LEN, VMASK_ANY_CHAR | VMASK_SPACES);
                                             universal_ptr = tmp_wcs;
                                             break;
                                         
                                         case LIST_ANIMAL_NAME:
-                                            tui_draw_popup_form (
-                                                L"Поиск по имени",
-                                                L"Введите имя животного.",
-                                                L"имя",
-                                                tmp_wcs,
-                                                ANIMAL_NAME_MAX_LEN,
-                                                VMASK_ANY_CHAR | VMASK_SPACES
-                                            );
+                                            tui_draw_popup_form (L"Поиск по имени", L"Введите имя животного.", L"имя", tmp_wcs, ANIMAL_NAME_MAX_LEN, VMASK_ANY_CHAR | VMASK_SPACES);
                                             universal_ptr = tmp_wcs;
                                             break;
                                         
                                         case LIST_PRODUCT_TYPE:
-                                            tui_draw_popup_form (
-                                                L"Поиск по типу",
-                                                L"Введите тип продукта.",
-                                                L"тип",
-                                                tmp_wcs,
-                                                PRODUCT_TYPE_MAX_LEN,
-                                                VMASK_ANY_CHAR | VMASK_SPACES
-                                            );
+                                            tui_draw_popup_form (L"Поиск по типу", L"Введите тип продукта.", L"тип", tmp_wcs, PRODUCT_TYPE_MAX_LEN, VMASK_ANY_CHAR | VMASK_SPACES);
                                             universal_ptr = tmp_wcs;
                                             break;
                                         
@@ -345,16 +334,59 @@ int main ()
                                     if (selected_key > LIST_DATE)
                                         break;
 
-                                    /* Найти все совпадения */
-                                    tmp_element_ptr = selected_table_list->head;
-                                    while (tmp_element_ptr = lists_SearchElementByFieldFromThisElement (tmp_element_ptr, selected_key, universal_ptr))
+                                    // Если предстоит уточнить поиск, т.е. найти какие-то элементы в результатах поиска, ...
+                                    if (selected_table_list == search_results_list)
+                                    // ... то поудалять неподходящие элементы из результатов поиска без изменения исходных данных ...
                                     {
-                                        tmp_created_element = lists_CreateNewElement (&tmp_element_ptr->data);
-                                        tmp_created_element->id = tmp_element_ptr->id;
-                                        lists_InsertAsListsTail (search_results_list, tmp_created_element);
-                                        tmp_element_ptr = tmp_element_ptr->next;
+                                        for (tmp_element_ptr = selected_table_list->head; tmp_element_ptr;)
+                                        {
+                                            if (tmp_element_ptr != lists_SearchElementByFieldFromThisElement (tmp_element_ptr, selected_key, universal_ptr))
+                                            {
+                                                if (selected_table_list->head == tmp_element_ptr)
+                                                {
+                                                    selected_table_list->head = tmp_element_ptr->next;
+                                                    lists_DeleteElement (tmp_element_ptr);
+                                                    tmp_element_ptr = selected_table_list->head;
+                                                }
+                                                else
+                                                {
+                                                    if (tmp_element_ptr->next)
+                                                    {
+                                                        tmp_element_ptr = tmp_element_ptr->next;
+                                                        lists_DeleteElement (tmp_element_ptr->prev);
+                                                    }
+                                                    else
+                                                    {
+                                                        lists_DeleteElement (tmp_element_ptr);
+                                                        tmp_element_ptr = NULL;
+                                                    }
+                                                }
+                                                selected_table_list->_length_--;
+                                            }
+                                            else
+                                            {
+                                                tmp_element_ptr = tmp_element_ptr->next;
+                                            }
+                                        }
                                     }
-                                    selected_table_list = search_results_list;
+                                    else
+                                    // ... иначе надо создать новый список с результатами поиска
+                                    {
+                                        lists_CleanListObject (search_results_list);
+
+                                        tmp_element_ptr = selected_table_list->head;
+
+                                        while (tmp_element_ptr = lists_SearchElementByFieldFromThisElement (tmp_element_ptr, selected_key, universal_ptr))
+                                        {
+                                            tmp_created_element = lists_CreateNewElement (&tmp_element_ptr->data);
+                                            lists_InsertAsListsTail (search_results_list, tmp_created_element);
+                                            tmp_created_element->id = tmp_element_ptr->id;
+                                            tmp_element_ptr = tmp_element_ptr->next;
+                                        }
+                                        selected_table_list = search_results_list;
+                                    }
+
+                                    curr_selected_table_row = 1;
                                 }
                                 break;
                             
@@ -375,7 +407,7 @@ int main ()
                                         break;
                                     }
 
-                                    if (main_list->_length_ < 1)
+                                    if (selected_table_list->_length_ < 1)
                                     {
                                         tui_draw_popup_text_message (
                                             L"ОШИБКА",
@@ -402,8 +434,8 @@ int main ()
                                         &d_2
                                     );
 
-                                    tmp_weight = lists_GetWeightForPeriod (main_list, &d_1, &d_2);
-                                    tmp_cost   = lists_GetCostForPeriod   (main_list, &d_1, &d_2);
+                                    tmp_weight = lists_GetWeightForPeriod (selected_table_list, &d_1, &d_2);
+                                    tmp_cost   = lists_GetCostForPeriod   (selected_table_list, &d_1, &d_2);
 
                                     swprintf (tmp_wcs, sizeof(tmp_wcs), L"Общая масса за указанный период: %Lf г.\nОбщая стоимость продуктов за указанный период: %Lf Р.", tmp_weight, tmp_cost);
 
@@ -437,7 +469,7 @@ int main ()
                                     curr_selected_page--;
                                 break;
                             case MKEY_ARROW_RIGHT:
-                                if (curr_selected_page < main_list->_length_ / (getmaxy(win_table) - 5) + !!(main_list->_length_ % (getmaxy(win_table) - 5)))
+                                if (curr_selected_page < selected_table_list->_length_ / (getmaxy(win_table) - 5) + !!(selected_table_list->_length_ % (getmaxy(win_table) - 5)))
                                     curr_selected_page++;
                                 break;
 
@@ -593,7 +625,7 @@ int main ()
                         wclear (win_table);
                         drawed_rows = tui_draw_table_in_window (win_table, *selected_table_list, curr_selected_page, curr_selected_table_row);
 
-                        if (selected_table_list == search_results_list)
+                        if (selected_table_list != search_results_list)
                             mvwprintw (win_main, getmaxy(win_main) - 10, 1, "  (N) Показать прошлые результаты поиска.                         ");
                         else
                             mvwprintw (win_main, getmaxy(win_main) - 10, 1, "  (N) Показать все данные.                                        ");
