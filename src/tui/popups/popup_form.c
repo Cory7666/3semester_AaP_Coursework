@@ -49,6 +49,8 @@ int tui_draw_popup_form (const wchar_t * popup_title, const wchar_t * message, c
             mvwprintw (popup_win, 3 + message_lines_cnt + tmp_helper_counter++, 1, "* Цифры.");
         if (mode & VMASK_PUNCTS)
             mvwprintw (popup_win, 3 + message_lines_cnt + tmp_helper_counter++, 1, "* Точки и запятые.");
+        if (mode & VMASK_ADD_FS_CHARS)
+            mvwprintw (popup_win, 3 + message_lines_cnt + tmp_helper_counter++, 1, "* \"_\", \"/\", \":\" и \"-\".");
     }
 
     /* Создать окно для формы */

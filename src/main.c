@@ -454,6 +454,7 @@ int main ()
                             // Действие "Задание по варианту"
                             case L'T': case L't':
                                 {
+                                    /*
                                     if (selected_table_list == search_results_list)
                                     {
                                         tui_draw_popup_text_message (
@@ -462,6 +463,7 @@ int main ()
                                         );
                                         break;
                                     }
+                                    */
 
                                     if (selected_table_list->_length_ < 1)
                                     {
@@ -580,11 +582,11 @@ int main ()
                                         memset (tmp_wcs, 0, sizeof(tmp_wcs));
                                         tui_draw_popup_form (
                                             L"Имя файла",
-                                            L"Осталось ввести имя файла.\nПримечание: обычно все файлы сохранений хранятся в папке \"data\".",
+                                            L"Осталось ввести имя файла.",
                                             L" Введите имя файла",
                                             tmp_wcs,
                                             FILENAME_MAX_LENGTH,
-                                            VMASK_ANY_CHAR | VMASK_DIGITS | VMASK_PUNCTS
+                                            VMASK_ANY_CHAR | VMASK_DIGITS | VMASK_SPACES | VMASK_PUNCTS | VMASK_ADD_FS_CHARS
                                         );
 
                                         /* Проверить на существование файл */
@@ -592,7 +594,7 @@ int main ()
                                         {
                                             tui_draw_popup_text_message (
                                                 L"ОШИБКА!",
-                                                L"Невозможно получить доступ к файлу.\nВозможно файл не существует или его нельзя прочитать.\nПовторите ввод позже..."
+                                                L"Невозможно получить доступ к файлу.\nВозможно файл не существует или его нельзя прочитать.\nВ следующий раз введите достижимый файл."
                                             );
                                             break;
                                         }
@@ -610,6 +612,7 @@ int main ()
                                                 read_from_csv (main_list, tmp_wcs);
                                                 break;
                                         }
+                                        selected_table_list = main_list;
 
                                         tui_draw_popup_text_message (
                                             L"УСПЕХ!",
@@ -632,7 +635,7 @@ int main ()
                                         {
                                             tui_draw_popup_text_message (
                                                 L"ОШИБКА!",
-                                                L"Похоже, что данные отсутствуют, а значит нечего сохранять.\nДля начала добавьте какие-то данные."
+                                                L"Похоже, что данные отсутствуют, а значит нечего сохранять.\nДля начала добавьте какие-то данные или смените сохраняемую таблицу."
                                             );
                                             break;
                                         }
@@ -643,17 +646,29 @@ int main ()
                                                     L"Выберите тип файла для сохранения:\n* .bin -> Специальный формат для хранения данных в бинарном формате. Злоумышленнику не сможет скомпрометировать данные.\n*  .csv -> Текстовый формат хранения данных. Возможность как редактирования Текстовыми редакторами, так и экспорта в другие программы, например, MS Excel.",
                                                     FILE_FORMATS_MENU
                                                 );
+                                        /* Выйти, если пользователь запросил отмену */
+                                        if (selected_key == 3)
+                                        {
+                                            tui_draw_popup_text_message (L"Предупреждение", L"Отмена сохранения данных в файл.");
+                                            break;
+                                        }
                                         
                                         /* Обнулить значение tmp_wcs и Запросить имя файла для сохранения */
                                         memset (tmp_wcs, 0, sizeof(tmp_wcs));
                                         tui_draw_popup_form (
                                             L"Имя файла",
-                                            L"Осталось ввести имя файла.\nПримечание: по умолчанию все файлы сохранений хранятся в папке \"data\".",
+                                            L"Осталось ввести имя файла.",
                                             L" Введите имя файла",
                                             tmp_wcs,
                                             FILENAME_MAX_LENGTH,
-                                            VMASK_ANY_CHAR | VMASK_DIGITS
+                                            VMASK_ANY_CHAR | VMASK_DIGITS | VMASK_SPACES | VMASK_PUNCTS | VMASK_ADD_FS_CHARS
                                         );
+
+                                        if (!wcslen (tmp_wcs))
+                                        {
+                                            tui_draw_popup_text_message (L"Предупреждение", L"Данные не были введены. Отмена сохранения.");
+                                            break;
+                                        }
                                         
                                         switch (selected_key)
                                         {
@@ -667,10 +682,16 @@ int main ()
                                                 break;
                                         }
 
-                                        tui_draw_popup_text_message (
-                                            L"УСПЕХ!",
-                                            L"Все данные были сохранены."
-                                        );  
+                                        if (!is_exist_wcs (tmp_wcs))
+                                            tui_draw_popup_text_message (
+                                                L"УСПЕХ!",
+                                                L"Все данные были сохранены."
+                                            );
+                                        else
+                                            tui_draw_popup_text_message (
+                                                L"НЕУДАЧА!",
+                                                L"Данные не были сохранены. Пожалуйста, выберите другой путь."
+                                            );
 
                                         break;
                                 }
