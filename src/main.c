@@ -129,9 +129,65 @@ int main ()
 
 
 
+                            // Действие "Удалить элемент таблицы"
                             case L'V': case L'v':
                                 {
+                                    if (selected_table_list->_length_ < 1)
+                                    {
+                                        tui_draw_popup_text_message (L"Предупреждение", L"Невозможно удалить несуществующую строку таблицы.");
+                                        break;
+                                    }
+
+                                    length_t position = (curr_selected_page - 1) * (getmaxy(win_table) - 5) + curr_selected_table_row;
+                                    list_elem_t
+                                        * tmp_element = lists_SearchElementByField (selected_table_list, LIST_POSITION, (void *) &position),
+                                        * tmp_element_2 = NULL;
+
+                                    if (tui_draw_popup_select (L"Опасное действие", L"ВНИМАНИЕ: вы хотите удалить элемент таблицы. Восстановить удалённые данные будет невозможно!\nВаше окончательное решение?", DELETE_ELEMENT_MENU) != 4 || tui_confirm_action () != 0)
+                                    {
+                                        tui_draw_popup_text_message (L"Предупреждение", L"Действие было отменено пользователем.");
+                                        break;
+                                    }
+
                                     
+                                    if (selected_table_list == main_list)
+                                    {
+                                        if ((tmp_element_2 = lists_SearchElementByField (search_results_list, LIST_ID, &tmp_element->id)))
+                                        {
+                                            if (search_results_list->head == tmp_element_2)
+                                            {
+                                                search_results_list->head = search_results_list->head->next;
+                                                if (search_results_list->head) search_results_list->head->prev = NULL;
+                                            }
+
+                                            lists_DeleteElement (tmp_element_2);
+                                            search_results_list->_length_--;
+                                        }
+                                    }  
+                                    else
+                                    {
+                                        if ((tmp_element_2 = lists_SearchElementByField (main_list, LIST_ID, &tmp_element->id)))
+                                        {
+                                            if (main_list->head == tmp_element_2)
+                                            {
+                                                main_list->head = main_list->head->next;
+                                                if (main_list->head) main_list->head->prev = NULL;
+                                            }
+
+                                            lists_DeleteElement (tmp_element_2);
+                                            main_list->_length_--;
+                                        }
+                                    }
+                                    if (selected_table_list->head == tmp_element)
+                                    {
+                                        selected_table_list->head = selected_table_list->head->next;
+                                        if (selected_table_list->head) selected_table_list->head->prev = NULL;
+                                    }
+
+                                    lists_DeleteElement (tmp_element);
+                                    selected_table_list->_length_--;
+
+                                    curr_selected_table_row = 1;
                                 }
                                 break;
 
