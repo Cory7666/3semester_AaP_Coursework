@@ -100,7 +100,6 @@ int main ()
                                             lists_InsertAsListsTail (main_list, lists_CreateNewElement(&d));
                                             break;
                                     }
-
                                 }
                                 break;
                             
@@ -188,6 +187,7 @@ int main ()
                                     selected_table_list->_length_--;
 
                                     curr_selected_table_row = 1;
+                                    curr_selected_page = 1;
                                 }
                                 break;
 
@@ -443,6 +443,7 @@ int main ()
                                     }
 
                                     curr_selected_table_row = 1;
+                                    curr_selected_page = 1;
                                 }
                                 break;
                             
@@ -542,6 +543,8 @@ int main ()
                                     selected_table_list = main_list;
                                 else
                                     selected_table_list = search_results_list;
+                                curr_selected_table_row = 1;
+                                curr_selected_page = 1;
                                 break;
                             
 
@@ -613,6 +616,8 @@ int main ()
                                                 break;
                                         }
                                         selected_table_list = main_list;
+                                        curr_selected_table_row = 1;
+                                        curr_selected_page = 1;
 
                                         tui_draw_popup_text_message (
                                             L"УСПЕХ!",
