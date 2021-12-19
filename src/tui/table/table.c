@@ -21,6 +21,8 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
     const int DATA_ROWS_CNT = getmaxy(win) - 4 - 1;  // Количество строк с данными в таблице
     int offset_from_header = 0,
         some_counter = 0;
+    wchar_t * tmp_wcs = calloc (sizeof(wchar_t), 256);
+    
     
     wmove(win, 0, 0);
 
@@ -46,8 +48,20 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
         DATE_COL_WIDTH, L"Дата"
     );
 
+    mvwprintw (win, 1, 0, "│ №  | ID | Номер ");
+
+    memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+    fitwcs (tmp_wcs, L"Информация о животном", ANIMAL_TOTAL_COL_WIDTH);
+    wprintw (win, "│%ls", tmp_wcs);
+
+    memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+    fitwcs (tmp_wcs, L"Информация о продукте", PRODUCT_TOTAL_COL_WIDTH);
+    wprintw (win, "│%ls", tmp_wcs);
+
+    wprintw (win, "│    Дата   │");
+
     /* Отрисовка шапки, 2 ряд */
-    mvwprintw(
+    /*mvwprintw(
         win, 2, 0,
         "│%*ls│%*ls│%*ls│%*ls│%*ls│%*ls│%*ls│%*ls│%*ls│%*ls│",
         POS_COL_WIDTH, L" ",
@@ -60,7 +74,27 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
         PRODUCT_WEIGHT_COL_WIDTH, L"Вес, г",
         PRODUCT_COST_COL_WIDTH, L"Стоимость, P",
         DATE_COL_WIDTH, L"поступления"
-    );
+    );*/
+
+    mvwprintw (win, 2, 0, "│    |    |вольера");
+
+    memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+    fitwcs (tmp_wcs, L"Ареал обитания", ANIMAL_ARIAL_COL_WIDTH);
+    wprintw (win, "│%ls", tmp_wcs);
+
+    memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+    fitwcs (tmp_wcs, L"Порода", ANIMAL_BREED_COL_WIDTH);
+    wprintw (win, "│%ls", tmp_wcs);
+
+    memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+    fitwcs (tmp_wcs, L"Имя", ANIMAL_NAME_COL_WIDTH);
+    wprintw (win, "│%ls", tmp_wcs);
+
+    memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+    fitwcs (tmp_wcs, L"Тип", PRODUCT_TYPE_COL_WIDTH);
+    wprintw (win, "│%ls", tmp_wcs);
+
+    wprintw (win, "│ Вес, г │Стоимость, P│поступления│");
 
     /* Отрисовать нижнюю границу шапки таблицы */
     wmove(win, 3, 0);
@@ -82,7 +116,11 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
     list_elem_t * elem = lists_SearchElementByField(&list_obj, LIST_POSITION, (void *) &first_element_position);
 
     if (!elem)
-        mvwprintw(win, 4 + offset_from_header++, 0, "│%*s│", TABLE_TOTAL_WIDTH - 2, "Нет данных в списке.");
+    {
+        memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+        fitwcs (tmp_wcs, L"Нет данных в списке.", TABLE_TOTAL_WIDTH - 2);
+        mvwprintw (win, 4 + offset_from_header++, 0, "│%ls│", tmp_wcs);
+    }
     else
     {
         wchar_t date_tmp[40]; memset (date_tmp, 0, sizeof(date_tmp));
@@ -126,5 +164,6 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
     for (int i = 0; i < DATE_COL_WIDTH;          i++) waddstr(win, "─");
     waddstr(win, "┘");
 
+    free (tmp_wcs);
     return some_counter;
 }
