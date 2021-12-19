@@ -78,7 +78,7 @@ int main ()
 
 
                             // Действие "Добавить элемент" 
-                            case L'P': case L'p':
+                            case L'P': case L'p': case L'З': case L'з':
                                 {
                                     if (selected_table_list == search_results_list)
                                     {
@@ -109,7 +109,7 @@ int main ()
 
 
                             // Действие "Подробная информация"
-                            case L'R': case L'r':
+                            case L'R': case L'r': case L'К': case L'к':
                                 {
                                     length_t position = (curr_selected_page - 1) * (getmaxy(win_table) - 5) + curr_selected_table_row;
                                     list_elem_t * element = lists_SearchElementByField (selected_table_list, LIST_POSITION, (void *) &position);
@@ -129,7 +129,7 @@ int main ()
 
 
                             // Действие "Удалить элемент таблицы"
-                            case L'V': case L'v':
+                            case L'V': case L'v': case L'М': case L'м':
                                 {
                                     if (selected_table_list->_length_ < 1)
                                     {
@@ -197,7 +197,7 @@ int main ()
 
 
                             // Действие "Редактировать элемент"
-                            case L'G': case L'g':
+                            case L'G': case L'g': case L'П': case L'п':
                                 {
                                     length_t position = (curr_selected_page - 1) * (getmaxy(win_table) - 5) + curr_selected_table_row;
                                     list_elem_t * element = lists_SearchElementByField (selected_table_list, LIST_POSITION, (void *) &position);
@@ -231,7 +231,7 @@ int main ()
 
 
                             // Действие "Сортировка"
-                            case L'S': case L's':
+                            case L'S': case L's': case L'Ы': case L'ы':
                                 {
                                     if (selected_table_list->_length_ < 1)
                                     {
@@ -272,7 +272,7 @@ int main ()
 
 
                             // Действие "Поиск"
-                            case L'F': case L'f':
+                            case L'F': case L'f': case L'А': case L'а':
                                 {
                                     if (selected_table_list->_length_ < 1)
                                     {
@@ -453,7 +453,7 @@ int main ()
 
 
                             // Действие "Задание по варианту"
-                            case L'T': case L't':
+                            case L'T': case L't': case L'Е': case L'е':
                                 {
                                     /*
                                     if (selected_table_list == search_results_list)
@@ -538,7 +538,7 @@ int main ()
 
 
                             // Изменение выбранной таблицы
-                            case L'N': case L'n':
+                            case L'N': case L'n': case L'Т': case L'т':
                                 if (selected_table_list == search_results_list)
                                     selected_table_list = main_list;
                                 else
@@ -553,7 +553,7 @@ int main ()
 
 
                             // Действие "Работа с файлами"
-                            case L'W': case L'w':
+                            case L'W': case L'w': case L'Ц': case L'ц':
                                 // Выбор действия на файлами
                                 selected_key = tui_draw_popup_select (
                                                     L"Сохранить/Загрузить",
