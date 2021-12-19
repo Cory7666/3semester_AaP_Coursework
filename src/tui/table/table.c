@@ -136,13 +136,29 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
             wprintw(win, "│%*d", POS_COL_WIDTH, element_position);
             wprintw(win, "│%*lu", ID_COL_WIDTH, elem->id);
             wprintw(win, "│%*lu", CAGE_NUM_COL_WIDTH, elem->data.cage_num);
-            wprintw(win, "│%*ls", ANIMAL_ARIAL_COL_WIDTH, elem->data.animal.areal);
-            wprintw(win, "│%*ls", ANIMAL_BREED_COL_WIDTH, elem->data.animal.breed);
-            wprintw(win, "│%*ls", ANIMAL_NAME_COL_WIDTH, elem->data.animal.name);
-            wprintw(win, "│%*ls", PRODUCT_TYPE_COL_WIDTH, elem->data.products.type);
+            
+            memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+            fitwcs (tmp_wcs, elem->data.animal.areal, ANIMAL_ARIAL_COL_WIDTH);
+            wprintw (win, "│%ls", tmp_wcs);
+
+            memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+            fitwcs (tmp_wcs, elem->data.animal.breed, ANIMAL_BREED_COL_WIDTH);
+            wprintw (win, "│%ls", tmp_wcs);
+
+            memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+            fitwcs (tmp_wcs, elem->data.animal.name, ANIMAL_NAME_COL_WIDTH);
+            wprintw (win, "│%ls", tmp_wcs);
+
+            memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+            fitwcs (tmp_wcs, elem->data.products.type, PRODUCT_TYPE_COL_WIDTH);
+            wprintw (win, "│%ls", tmp_wcs);
+            
             wprintw(win, "│%*.2Lf", PRODUCT_WEIGHT_COL_WIDTH, elem->data.products.weight);
             wprintw(win, "│%*.2Lf", PRODUCT_COST_COL_WIDTH, elem->data.products.cost);
-            wprintw(win, "│%*ls│", DATE_COL_WIDTH, date_tmp);
+
+            memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
+            fitwcs (tmp_wcs, date_tmp, DATE_COL_WIDTH);
+            wprintw (win, "│%ls│", tmp_wcs);
             
             if (offset_from_header + 1 == selected_row) wattroff(win, TUI_HIGHLIGHT_ITEM_STYLE);
 
