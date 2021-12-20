@@ -118,8 +118,6 @@ int main ()
                                         tui_popup_show_only_element (L"Информация о вольере", element);
                                     else
                                         tui_draw_popup_text_message (L"ОШИБКА", L"ОШИБКА: не удалось найти элемент.\nСкорее всего, это произошло потому, что отсутствуют данные.");
-                                
-                                    update_panels ();
                                 }
                                 break;
                             
@@ -187,7 +185,8 @@ int main ()
                                     selected_table_list->_length_--;
 
                                     curr_selected_table_row = 1;
-                                    curr_selected_page = 1;
+                                    if (drawed_rows <= 1)
+                                        curr_selected_page--;
                                 }
                                 break;
 
@@ -219,9 +218,6 @@ int main ()
                                     }
                                     else
                                         tui_draw_popup_text_message (L"ОШИБКА", L"ОШИБКА: не удалось найти элемент.\nСкорее всего, это произошло потому, что в таблице отсутствуют данные.");
-                                
-                                    update_panels ();
-                                    doupdate ();
                                 }
                                 break;
                             
@@ -525,11 +521,17 @@ int main ()
                             // Изменение текущей страницы
                             case MKEY_ARROW_LEFT:
                                 if (curr_selected_page > 1)
+                                {
                                     curr_selected_page--;
+                                    curr_selected_table_row = 1;
+                                }
                                 break;
                             case MKEY_ARROW_RIGHT:
                                 if (curr_selected_page < selected_table_list->_length_ / (getmaxy(win_table) - 5) + !!(selected_table_list->_length_ % (getmaxy(win_table) - 5)))
+                                {
                                     curr_selected_page++;
+                                    curr_selected_table_row = 1;
+                                }
                                 break;
 
 
