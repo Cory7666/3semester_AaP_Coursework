@@ -60,22 +60,6 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
 
     wprintw (win, "│    Дата   │");
 
-    /* Отрисовка шапки, 2 ряд */
-    /*mvwprintw(
-        win, 2, 0,
-        "│%*ls│%*ls│%*ls│%*ls│%*ls│%*ls│%*ls│%*ls│%*ls│%*ls│",
-        POS_COL_WIDTH, L" ",
-        ID_COL_WIDTH,  L" ",
-        CAGE_NUM_COL_WIDTH, L"вольера",
-        ANIMAL_ARIAL_COL_WIDTH, L"Ареал обитания",
-        ANIMAL_BREED_COL_WIDTH, L"Порода",
-        ANIMAL_NAME_COL_WIDTH, L"Имя",
-        PRODUCT_TYPE_COL_WIDTH, L"Тип",
-        PRODUCT_WEIGHT_COL_WIDTH, L"Вес, г",
-        PRODUCT_COST_COL_WIDTH, L"Стоимость, P",
-        DATE_COL_WIDTH, L"поступления"
-    );*/
-
     mvwprintw (win, 2, 0, "│    |    |вольера");
 
     memset (tmp_wcs, 0, sizeof(wchar_t) * 256);
@@ -94,7 +78,7 @@ int tui_draw_table_in_window (WINDOW * win, const list_obj_t list_obj, const len
     fitwcs (tmp_wcs, L"Тип", PRODUCT_TYPE_COL_WIDTH);
     wprintw (win, "│%ls", tmp_wcs);
 
-    wprintw (win, "│ Вес, г │Стоимость, P│поступления│");
+    wprintw (win, "│ Вес, г │Стоимость, P│ кормления │");
 
     /* Отрисовать нижнюю границу шапки таблицы */
     wmove(win, 3, 0);
