@@ -60,7 +60,7 @@ TUI_FILES = $(addprefix $(SRC_TUI_PATH)/,\
 
 PROG_NAME = program
 GCC = gcc
-CFLAGS = -I $(INCLUDE_PATH) -g
+CFLAGS = -I $(INCLUDE_PATH) -O2 -pipe -march=native
 CLIBS = -lpanelw -lncursesw
 
 
