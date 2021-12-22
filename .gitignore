@@ -1,7 +1,0 @@
-.vscode
-*.o
-*.a
-program
-*.csv
-*.bin
-*.txt
