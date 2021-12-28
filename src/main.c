@@ -21,17 +21,15 @@ int main ()
                * search_results_list = lists_CreateNewListObject ();  // Список с результатами поиска
     int curr_selected_page = 1,
         curr_selected_table_row = 1,
-        drawed_rows = 0;
+        drawed_rows = 0,
+        unsaved_data_flag = 0,
+        exit_program_flag = 0;
 
     draw_win_background (stdscr);
     refresh ();
     
-    while (
-        (selected_key = tui_draw_popup_select (L"Программа для курсового проекта", L"Добро пожаловать в программу, созданную специально для курсового проекта.\nВыберите действие.", MAIN_MENU))
-        != 3
-    )
-    {
-        
+    while (!exit_program_flag)
+    {selected_key = tui_draw_popup_select (L"Программа для курсового проекта", L"Добро пожаловать в программу, созданную специально для курсового проекта.\nВыберите действие.", MAIN_MENU);
 
         switch (selected_key)
         {
@@ -94,10 +92,12 @@ int main ()
                                     {
                                         case TUI_ADD_ELEMENT_FLAG | TUI_AT_BEGIN_FLAG:
                                             lists_InsertAsListsHead (main_list, lists_CreateNewElement(&d));
+                                            unsaved_data_flag = 1;
                                             break;
                                         
                                         case TUI_ADD_ELEMENT_FLAG | TUI_AT_END_FLAG:
                                             lists_InsertAsListsTail (main_list, lists_CreateNewElement(&d));
+                                            unsaved_data_flag = 1;
                                             break;
                                     }
                                 }
@@ -187,6 +187,8 @@ int main ()
                                     curr_selected_table_row = 1;
                                     if (drawed_rows <= 1)
                                         curr_selected_page--;
+                                    
+                                    unsaved_data_flag = 1;
                                 }
                                 break;
 
@@ -215,6 +217,8 @@ int main ()
                                         {
                                             lists_SearchElementByField(main_list, LIST_ID, &element->id)->data = element->data;
                                         }
+
+                                        unsaved_data_flag = 1;
                                     }
                                     else
                                         tui_draw_popup_text_message (L"ОШИБКА", L"ОШИБКА: не удалось найти элемент.\nСкорее всего, это произошло потому, что в таблице отсутствуют данные.");
@@ -259,6 +263,8 @@ int main ()
                                     lists_SortListByField (selected_table_list, sort_order, prio_field);
 
                                     tui_draw_popup_text_message (L"Удача", L"Сортировка завершена.");
+
+                                    unsaved_data_flag = 1;
                                 }
                                 break;
                             
@@ -626,6 +632,8 @@ int main ()
                                             L"Все данные были считаны."
                                         );                                        
 
+                                        unsaved_data_flag = 0;
+
                                         break;
                                     
                                     // Сохранить данные
@@ -690,10 +698,15 @@ int main ()
                                         }
 
                                         if (!is_exist_wcs (tmp_wcs))
+                                        {
                                             tui_draw_popup_text_message (
                                                 L"УСПЕХ!",
                                                 L"Все данные были сохранены."
                                             );
+
+                                            if (save_list == main_list)
+                                                unsaved_data_flag = 0;
+                                        }
                                         else
                                             tui_draw_popup_text_message (
                                                 L"НЕУДАЧА!",
@@ -733,6 +746,30 @@ int main ()
                     L"О программе",
                     L"Программа была написана для курсового проекта для предмета \"АиП\" (3 семестр).\n* Создатель: Филозоп Алексей.\n* Исходный код: github.com/Cory7666/3semester_AaP_Coursework_new.git"
                 );
+                break;
+            
+            // Выбрано "Выход"
+            case 3:
+                if (unsaved_data_flag)
+                {
+                    switch (
+                        tui_draw_popup_select
+                        (
+                            L"Стойте!",
+                            L"Есть несохранённые данные в Главной таблице. Что сделать?",
+                            SAVE_UNSAVED_DATA_MENU
+                        )
+                    )
+                    {
+                        case 2:
+                            exit_program_flag = 1;
+                            break;
+                    }
+                }
+                else
+                {
+                    exit_program_flag = 1;
+                }
                 break;
         }
     }
